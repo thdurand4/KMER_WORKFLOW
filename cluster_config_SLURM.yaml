@@ -1,0 +1,48 @@
+__default__:
+    cpus-per-task : 4
+    mem-per-cpu : 10G
+    partition : agap_short
+    log : "slurm_logs/log/{rule}_{wildcards}.out"
+    error : 'slurm_logs/error/{rule}_{wildcards}.error'
+    job-name : "{rule}.{wildcards}"
+
+    
+sub_set20M:
+    cpus-per-task: 3
+    partition: agap_normal
+    mem-per-cpu : 10G
+    
+kmer_count: 
+    cpus-per-task: 4
+    partition: agap_normal
+    mem-per-cpu : 16G
+
+binary_to_tbl:
+    cpus-per-task: 4
+    partition: agap_normal
+    mem-per-cpu : 5G
+    
+sorted_table:
+    cpus-per-task: 4
+    partition: agap_normal
+    mem-per-cpu : 5G
+    
+add_columns_names:
+    cpus-per-task: 1
+    partition: agap_normal
+    mem-per-cpu : 4G
+
+merge_table: 
+    cpus-per-task: 7
+    partition: agap_normal
+    mem-per-cpu : 16G
+
+subset_kmer: 
+    cpus-per-task: 7
+    partition: agap_normal
+    mem-per-cpu : 16G
+        
+parse_sub_set_kmer: 
+    cpus-per-task: 1
+    partition: agap_normal
+    mem-per-cpu : 1G

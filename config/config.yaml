@@ -1,0 +1,36 @@
+############################################# Part I : Path of Input and Output data ############################################
+
+DATA:
+    ############################################################################
+    #Give information about path of accessions files , path of the scripts and path where results will be writen
+    ACCESSIONS: "/home/durandt/scratch/WORKFLOW_KMER/accession/"
+    OUTPUT: "/home/durandt/scratch/WORKFLOW_KMER/RESULTS/"
+    SCRIPTS: "/home/durandt/scratch/WORKFLOW_KMER/scripts/"
+    LIST_ACCESSION: "/home/durandt/scratch/WORKFLOW_KMER/liste_accession/list_access.txt" 
+
+    ###########################################################################
+
+############################################# Part II : Parameters of tools ############################################
+
+TOOLS_PARAMS:
+    ##########################################################################
+    #Choose what you want for tools
+    SEQTK_SAMPLE: "-s 100 20000000"
+    KAT_HIST: "-t 4 --dump_hash --mer_len 50"
+    JELLYFISH_DUMP: "-c -t -L 10"
+    SORTED_TABLE: "--parallel=6 -k1"
+    HMMER: "--cpu 8 -E 0.003"
+    INTERPROSCAN: "-pa -cpu 4 -f GFF3"
+
+
+############################################# Part III : Optionals Rules ############################################
+
+OPTIONAL:
+    ############################################################################
+    #Choose if you want to work on a subset table
+    SUBSET_ACCESSION: "False"
+    SUBSET_SCRIPT: "yes"
+    #Choose the name of final tables
+    MERGE_TABLE: "three_access"
+    SUBSET_TABLE: "one_access"
+    UPSET_TABLE: "final_table-3"

@@ -1,4 +1,7 @@
-# KMER_WORKFLOW
+.. image:: logo/téléchargement.png
+   :target: logo/téléchargement.png
+   :align: center
+   :alt: Workflow_KMER Logo
 
 |PythonVersions| |SnakemakeVersions|
 

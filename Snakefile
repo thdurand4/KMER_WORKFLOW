@@ -1,19 +1,32 @@
+import os
+from os.path import exists
+
 configfile: "config/config.yaml"
 
 #Stockage des chemins des scripts et des accessions dans des variables à partir du fichier config
-accessions = config['DATA']['ACCESSIONS']
-output_dir = config['DATA']['OUTPUT']
+accessions = config['DATA']['FASTQ']
+output_dir = config['DATA']['OUTPUT_DIR']
 script_dir = config['DATA']['SCRIPTS']
 merge_table_name = config['OPTIONAL']['MERGE_TABLE']
 subset_table_name = config['OPTIONAL']['SUBSET_TABLE']
 upset_table_name = config['OPTIONAL']['UPSET_TABLE']
+upset_plot = config['OPTIONAL']['UPSET_PLOT']
+fastq = config['DATA']['LIST_ACCESSION']
+
+
+with open(fastq,"r") as f1:
+    for lignes in f1:
+        ligne = lignes.rstrip("\n")
+        id = ligne.split("\t")
+        if not exists(accessions+id[0]+".fastq.gz"):
+            os.system("ln -s "+id[1]+" "+accessions+id[0]+".fastq.gz")
 
 log_dir = f"{output_dir}LOGS/"
 
 # Récupération du basename de nos accessions
-RENAME_ACC, = glob_wildcards(f"{accessions}{{samples}}_Resequencing_1.fastq.gz", followlinks=True)
+RENAME_ACC, = glob_wildcards(f"{accessions}{{samples}}.fastq.gz", followlinks=True)
 
-
+print(RENAME_ACC)
 
 def get_threads(rule, default):
     """
@@ -28,13 +41,13 @@ def get_threads(rule, default):
 
 rule finale:
     input:
-        test = expand(f"{output_dir}6_TABLE_FOR_UPSETPLOT/PARSED/{upset_table_name}.tbl", samples = RENAME_ACC)
+        upset_final = expand(f"{output_dir}7_UPSET_PLOT/{upset_plot}", samples = RENAME_ACC)
 
 
 rule sub_set20M :
     threads: get_threads("sub_set20M",5)
     input:
-        acces_renamed = f"{accessions}{{samples}}_Resequencing_1.fastq.gz"
+        acces_renamed = f"{accessions}{{samples}}.fastq.gz"
     output:
         accession_20M = f"{output_dir}1_ACCESSION_20M_READS/{{samples}}_20M.fastq"
     params:
@@ -234,7 +247,7 @@ rule subset_kmer:
     envmodules:
         "python/3.8.2"
     shell:
-        f"python {script_dir}subset_kmer.py -in {{input.table_merged}} -o {{output.subset_table}} -a {{config[DATA][LIST_ACCESSION]}} -arg {{config[OPTIONAL][SUBSET_SCRIPT]}} 1> {{log.output}} 2> {{log.error}}"
+        f"python {script_dir}subset_kmer.py -in {{input.table_merged}} -o {{output.subset_table}} -a {{config[DATA][LIST_SUBSET]}} -arg {{config[OPTIONAL][SUBSET_SCRIPT]}} 1> {{log.output}} 2> {{log.error}}"
 
 rule parse_sub_set_kmer:
     threads: get_threads("parse_sub_set_kmer",7)
@@ -262,3 +275,34 @@ rule parse_sub_set_kmer:
         "python/3.8.2"
     shell:
         f"python {script_dir}count_occurence_intersections.py --database {{input.table_merged}} --output {{output.upset_table}} 1> {{log.output}} 2> {{log.error}}"
+
+rule upset_plot:
+    threads: get_threads("upset_plot",1)
+    input:
+        upset_table = rules.parse_sub_set_kmer.output
+    output:
+        upset_plot = f"{output_dir}7_UPSET_PLOT/{upset_plot}"
+    params:
+        list_color = config["DATA"]["LIST_COULEURS"]
+    log:
+        error=f'{log_dir}upset_plot/upset_plot.e',
+        output=f'{log_dir}upset_plot/upset_plot.o'
+    message:
+        f"""
+                 Running {{rule}}
+                    Input : 
+                        - Upset Table : {{input.upset_table}}
+                    Output : 
+                        - Upset Plot : {{output.upset_plot}}
+                    Others :
+                        - Threads : {{threads}}
+                        - LOG error : {{log.error}}
+                        - LOG output : {{log.output}}
+
+                """
+    envmodules:
+        "perllib/5.16.3"
+    shell:
+        f"perl {script_dir}GraphKmer_v2.pl -in {{input.upset_table}} -list {{params.list_color}} -outprefix {{output.upset_plot}} 1> {{log.output}} 2> {{log.error}}"
+
+

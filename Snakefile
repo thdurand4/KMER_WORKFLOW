@@ -1,5 +1,7 @@
 import os
+import random
 from os.path import exists
+from collections import defaultdict
 
 configfile: "config/config.yaml"
 
@@ -8,25 +10,53 @@ accessions = config['DATA']['FASTQ']
 output_dir = config['DATA']['OUTPUT_DIR']
 script_dir = config['DATA']['SCRIPTS']
 merge_table_name = config['OPTIONAL']['MERGE_TABLE']
-subset_table_name = config['OPTIONAL']['SUBSET_TABLE']
-upset_table_name = config['OPTIONAL']['UPSET_TABLE']
+full_intersect_name = config['OPTIONAL']['FULL_INTERSECT_NAME']
+parsed_intersect_name = config['OPTIONAL']['PARSED_INTERSECT_NAME']
 upset_plot = config['OPTIONAL']['UPSET_PLOT']
 fastq = config['DATA']['LIST_ACCESSION']
+couleur = config["DATA"]["LIST_COULEURS"]
 
 
+dico_fastq = defaultdict(list)
+uniq_color = set()
 with open(fastq,"r") as f1:
     for lignes in f1:
         ligne = lignes.rstrip("\n")
         id = ligne.split("\t")
-        if not exists(accessions+id[0]+".fastq.gz"):
-            os.system("ln -s "+id[1]+" "+accessions+id[0]+".fastq.gz")
+        dico_fastq[id[0]].append(id[1])
+        uniq_color.add(id[0])
+
+
+
+
+with open("info.txt","w") as f2:
+    for k in dico_fastq:
+            if len(dico_fastq[k]) > 1 :
+                if not os.path.islink(accessions + k + ".fastq.gz"):
+                    os.system("ln -s " + random.choice(dico_fastq[k]) + " " + accessions + k + ".fastq.gz")
+                    f2.write(str(k)+"\t"+str(random.choice(dico_fastq[k]))+"\n")
+
+            else :
+                if not exists(accessions + k + ".fastq.gz"):
+                    os.system("ln -s " + str(dico_fastq[k]) + " " + accessions + k +".fastq.gz")
+                    f2.write(str(k)+"\t"+str(dico_fastq[k])+"\n")
+
+
+with open(couleur,"r+") as f3:
+    for elem in uniq_color:
+        sys.stdout = f3
+        print(elem)
+
+os.system("sort -o"+couleur+" "+couleur )
+
 
 log_dir = f"{output_dir}LOGS/"
 
 # Récupération du basename de nos accessions
 RENAME_ACC, = glob_wildcards(f"{accessions}{{samples}}.fastq.gz", followlinks=True)
 
-print(RENAME_ACC)
+
+#print(MULTIPLE_ACC)
 
 def get_threads(rule, default):
     """
@@ -41,7 +71,7 @@ def get_threads(rule, default):
 
 rule finale:
     input:
-        upset_final = expand(f"{output_dir}7_UPSET_PLOT/{upset_plot}", samples = RENAME_ACC)
+        upset_final = expand(f"{output_dir}6_INTERSECTION_TABLE/PARSED/{parsed_intersect_name}.tbl", samples = RENAME_ACC)
 
 
 rule sub_set20M :
@@ -177,7 +207,7 @@ rule add_columns_names:
         output = f'{log_dir}add_columns_names/add_columns_names_{{samples}}.o'
     message:
         f"""
-             Running {{rule}}
+                Running {{rule}}
                 Input : 
                     - Tabulate Sorted File : {{input.sorted_table}}
                 Output : 
@@ -194,7 +224,7 @@ rule add_columns_names:
         f"python {script_dir}name_columns.py -in {{input.sorted_table}} -o {{output.table_column_name}} 1> {{log.output}} 2> {{log.error}}"
 
 rule merge_table:
-    threads: get_threads("merge_table",5)
+    threads: get_threads("merge_table",6)
     input:
         table_column_name = expand(rules.add_columns_names.output, samples = RENAME_ACC)
     output:
@@ -217,27 +247,33 @@ rule merge_table:
                     - LOG output : {{log.output}}
 
             """
-    envmodules:
-        "python/3.8.2"
     shell:
-        f"python {script_dir}merge_table.py -in {{params.dir_all_files}} -o {{output.merged_table}} 1> {{log.output}} 2> {{log.error}}"
+        f"""
+        list="KMER" ; for file in {{params.dir_all_files}}*_named.tbl ; do prefix=$(basename -a -s _named.tbl $file) ; list="$list\\t$prefix" ; done ; echo -e $list > {{output.merged_table}}
+        {script_dir}createIndexMem-VERSION-NICO/createIndexMem-VERSION-NICO {{params.dir_all_files}}*.tbl >> {{output.merged_table}} 2> {{log.error}}
+        """
 
-rule subset_kmer:
-    threads: get_threads("subset_kmer",7)
+rule intersection_table:
+    threads: get_threads("intersection_table",6)
     input:
-        table_merged = rules.merge_table.output if config["OPTIONAL"]["SUBSET_ACCESSION"] == "True" else []
+        table_merged = rules.merge_table.output
     output:
-        subset_table = f"{output_dir}5_MERGED_TABLE/SUBSET/{subset_table_name}.tbl" if config["OPTIONAL"]["SUBSET_ACCESSION"] == "True" else []
+        table_parsed = f"{output_dir}6_INTERSECTION_TABLE/PARSED/{parsed_intersect_name}.tbl"
+    params:
+        kmer_coverage=config["TOOLS_PARAMS"]["INTERSECT_TABLE"],
+        path_seq= f"{output_dir}6_INTERSECTION_TABLE/SEQ_KMER",
+        all_table= config["TOOLS_PARAMS"]["FULL_TABLE"],
+        full_table= f"{output_dir}6_INTERSECTION_TABLE/FULL/{full_intersect_name}.tbl"
     log:
-        error=f'{log_dir}subset_kmer/subset_kmer.e',
-        output=f'{log_dir}subset_kmer/subset_kmer.o'
+        error=f'{log_dir}intersection_table/intersection_table.e',
+        output=f'{log_dir}intersection_table/intersection_table.o'
     message:
         f"""
              Running {{rule}}
                 Input : 
                     - Merged Table : {{input.table_merged}}
                 Output : 
-                    - Subset Merged Table : {{output.subset_table}}
+                    - Subset Merged Table : {{output.table_parsed}}
                 Others :
                     - Threads : {{threads}}
                     - LOG error : {{log.error}}
@@ -247,34 +283,11 @@ rule subset_kmer:
     envmodules:
         "python/3.8.2"
     shell:
-        f"python {script_dir}subset_kmer.py -in {{input.table_merged}} -o {{output.subset_table}} -a {{config[DATA][LIST_SUBSET]}} -arg {{config[OPTIONAL][SUBSET_SCRIPT]}} 1> {{log.output}} 2> {{log.error}}"
+        f"python {script_dir}count_occurence_intersections.py --database {{input.table_merged}} --graph {{output.table_parsed}} --path {{params.path_seq}} --full_table {{params.all_table}} --output {{params.full_table}} {{params.kmer_coverage}} 1> {{log.output}} 2> {{log.error}}"
 
-rule parse_sub_set_kmer:
-    threads: get_threads("parse_sub_set_kmer",7)
-    input:
-        table_merged = rules.subset_kmer.output if config["OPTIONAL"]["SUBSET_ACCESSION"] == "True" else [rules.merge_table.output]
-    output:
-        upset_table = f"{output_dir}6_TABLE_FOR_UPSETPLOT/PARSED/{upset_table_name}.tbl"
-    log:
-        error=f'{log_dir}parse_sub_set_kmer/parse_sub_set_kmer.e',
-        output=f'{log_dir}parse_sub_set_kmer/parse_sub_set_kmer.o'
-    message:
-        f"""
-             Running {{rule}}
-                Input : 
-                    - Merged Table : {{input.table_merged}}
-                Output : 
-                    - Subset Merged Table : {{output.upset_table}}
-                Others :
-                    - Threads : {{threads}}
-                    - LOG error : {{log.error}}
-                    - LOG output : {{log.output}}
 
-            """
-    envmodules:
-        "python/3.8.2"
-    shell:
-        f"python {script_dir}count_occurence_intersections.py --database {{input.table_merged}} --output {{output.upset_table}} 1> {{log.output}} 2> {{log.error}}"
+
+'''
 
 rule upset_plot:
     threads: get_threads("upset_plot",1)
@@ -306,3 +319,4 @@ rule upset_plot:
         f"perl {script_dir}GraphKmer_v2.pl -in {{input.upset_table}} -list {{params.list_color}} -outprefix {{output.upset_plot}} 1> {{log.output}} 2> {{log.error}}"
 
 
+'''

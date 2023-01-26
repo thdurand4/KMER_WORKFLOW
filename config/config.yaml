@@ -3,12 +3,13 @@
 DATA:
     ############################################################################
     #Give information about path of accessions files , path of the scripts and path where results will be writen
-    FASTQ: "/home/durandt/scratch/WORKFLOW_KMER/FASTQ/"
-    OUTPUT_DIR: "/home/durandt/scratch/WORKFLOW_KMER/RESULTS/"
-    SCRIPTS: "/home/durandt/scratch/WORKFLOW_KMER/scripts/"
-    LIST_ACCESSION: "/home/durandt/scratch/WORKFLOW_KMER/list_accession"
-    LIST_SUBSET : "/home/durandt/scratch/WORKFLOW_KMER/liste_accession/list_access.txt"
-    LIST_COULEURS: "/home/durandt/scratch/WORKFLOW_KMER/list_couleur/list_couleur"
+    FASTQ: "/home/durandt/scratch/WORKFLOW_KMER/KMER_PIPELINE_TEST/TEST_FASTQ/"  #Directory where the fastq files will be (symbolic link)
+    OUTPUT_DIR: "/home/durandt/scratch/WORKFLOW_KMER/KMER_PIPELINE_TEST/TEST_RESULTS/"  #Directory where all the results will be written
+    SCRIPTS: "/home/durandt/scratch/WORKFLOW_KMER/KMER_PIPELINE_TEST/scripts/"  #Directory of the scripts needed for the workflow
+    LIST_ACCESSION: "/home/durandt/scratch/WORKFLOW_KMER/KMER_PIPELINE_TEST/test_list_accs.txt"  #File needed to lauch the workflow it will contain "Accessions Path/to/fastq.gz black"
+    LIST_SUBSET : "/home/durandt/scratch/WORKFLOW_KMER/liste_accession/list_access.txt"  #File needed if you want work on substet. This file contains name of accession and KMER
+    LIST_COULEURS: "/home/durandt/scratch/WORKFLOW_KMER/KMER_PIPELINE_TEST/list_couleur"  #Give the path of the file that you need to make the graph
+    
 
     ###########################################################################
 
@@ -17,21 +18,21 @@ DATA:
 TOOLS_PARAMS:
     ##########################################################################
     #Choose what you want for tools
-    SEQTK_SAMPLE: "-s 100 20000000"
-    KAT_HIST: "-t 4 --dump_hash --mer_len 50"
-    JELLYFISH_DUMP: "-c -t -L 10"
-    SORTED_TABLE: "--parallel=6 -k1"
+    SEQTK_SAMPLE: "-s 100 20000000"  #SEQTK PARAMETERS
+    KAT_HIST: "-t 4 --dump_hash --mer_len 50"  #KAT PARAMETERS
+    JELLYFISH_DUMP: "-c -t -L 10" #JELLYFISH PARAMETERS
+    SORTED_TABLE: "--parallel=6 -k1"  #SORT PARAMETER
+    INTERSECT_TABLE: "--start 1 --end 400 --exclude /home/durandt/scratch/WORKFLOW_KMER/KMER_PIPELINE_TEST/list_exclude"
+    FULL_TABLE: "no" #yes OR no : If yes give --output in intersect table else do nothing
 
 
 ############################################# Part III : Optionals Rules ############################################
 
 OPTIONAL:
     ############################################################################
-    #Choose if you want to work on a subset table
-    SUBSET_ACCESSION: "False"
-    SUBSET_SCRIPT: "yes"
     #Choose the name of final tables
-    MERGE_TABLE: "three_access"
-    SUBSET_TABLE: "one_access"
-    UPSET_TABLE: "final_table-3"
-    UPSET_PLOT: "final_upset-3"
+    MERGE_TABLE: "test_10accs"  #Give the name of output merge table
+    FULL_INTERSECT_NAME: "one_access"   #Give the name of the full intersection table
+    PARSED_INTERSECT_NAME: "graph_1_400" #Give the name of the table which will be use to make the graph
+    UPSET_PLOT: "final_upset-3"  #Give the name of the graph (upset-plot)
+    INFO_FILE : "info_merge.txt"

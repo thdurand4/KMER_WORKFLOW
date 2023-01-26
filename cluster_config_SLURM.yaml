@@ -9,40 +9,41 @@ __default__:
     
 sub_set20M:
     cpus-per-task: 3
-    partition: agap_normal
+    partition: agap_short
     mem-per-cpu : 10G
     
 kmer_count: 
     cpus-per-task: 4
-    partition: agap_normal
+    partition: agap_short
     mem-per-cpu : 16G
 
 binary_to_tbl:
     cpus-per-task: 4
-    partition: agap_normal
+    partition: agap_short
     mem-per-cpu : 5G
     
 sorted_table:
     cpus-per-task: 4
-    partition: agap_normal
+    partition: agap_short
     mem-per-cpu : 5G
     
 add_columns_names:
     cpus-per-task: 1
-    partition: agap_normal
-    mem-per-cpu : 4G
+    partition: agap_short
+    mem-per-cpu : 120G
 
 merge_table: 
-    cpus-per-task: 7
-    partition: agap_normal
-    mem-per-cpu : 16G
-
-subset_kmer: 
-    cpus-per-task: 7
-    partition: agap_normal
-    mem-per-cpu : 16G
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 50G
+    nodes : 1
         
-parse_sub_set_kmer: 
+intersection_table: 
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 120G
+    
+upset_plot: 
     cpus-per-task: 1
     partition: agap_normal
     mem-per-cpu : 1G

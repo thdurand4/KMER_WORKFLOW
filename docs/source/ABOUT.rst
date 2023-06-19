@@ -30,7 +30,7 @@ A variety of useful tools are implemented to check the accuracy of assemblies.
 .. image:: _images/dag.png
    :target: _images/dag.png
    :alt: kmer_step_one
-   :width: 150px
+   :width: 100px
    :height: 700px
 
 

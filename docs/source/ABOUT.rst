@@ -27,12 +27,6 @@ Sub_Sampling reads Illumina and count KMERS
 
 A variety of useful tools are implemented to check the accuracy of assemblies.
 
-.. image:: _images/dag.png
-   :target: _images/dag.png
-   :alt: kmer_step_one
-   :width: 100px
-   :height: 800px
-
 
 PodiumASM checks the quality of the assemblies with using these tools:
 
@@ -84,3 +78,10 @@ Included tools :
 
 * SAMTOOLS version >= 1.15.1
 * BWA version >= 0.7.17
+
+
+.. image:: _images/dag.png
+   :target: _images/dag.png
+   :alt: dag
+   :width: 100px
+   :height: 800px

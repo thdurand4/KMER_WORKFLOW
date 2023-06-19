@@ -1,0 +1,84 @@
+.. image:: _images/logo.png
+   :target: _images/logo.png
+   :align: center
+   :alt: KMER Logo
+
+Today, assembly a genome using long reads from either Oxford Nanopore Technologies or Pacific Biosciences is really powerful, in particular to solve repeats and structural variants, for prokaryotic as well as for eukaryotic genomes. Such technologies provide assemblies that are increased in contiguity and accuracy.
+
+Due to the daily deluge of data sequences and the increasing number of released tools that are even updated every week, many species see having their genome assembled in almost chromosome-scale, and that’s great...
+
+However a huge question remains:
+
+*"But which assembly tool will provide the best result for your favorite organism?"*
+
+To that anguishing idea, we can answer: **PodiumASM can help you!**
+
+PodiumASM is is an open-source, scalable, modulable and traceable snakemake pipeline, able to compare multiple long read assemblies obtained from multiple assemblers tools. The workflow PodiumASM can help you to choose the best assemblies among all possibilities.
+
+Optional rule can be activate or not according to user’s requests in PodiumASM. PodiumASM also generates a report compiling information obtained at each step, to help user to decide which assembly results to work with.
+
+
+.. contents:: Table of Contents
+   :depth: 2
+   :backlinks: entry
+
+Quality Control of assemblies
+-----------------------------
+
+A variety of useful tools are implemented to check the accuracy of assemblies.
+
+.. image:: _images/schema_pipeline_global-QUALITY.png
+   :target: _images/schema_pipeline_global-QUALITY.png
+   :alt: QUALITY
+
+
+PodiumASM checks the quality of the assemblies with using these tools:
+
+.. note::
+   * BUSCO: helps to check if you have a good assembly, by searching the expected single-copy lineage-conserved orthologs in any newly sequenced genome from an appropriate phylogenetic clade.
+   * QUAST: a good starting point to evaluate the quality of assemblies, provides many helpful contiguity statistics and metrics.
+   * TAPESTRY: allows to detect telomere on assembled contigs.
+   * MUMMER : Use to align reference between assembly. Usefull for assemblytics tool
+   * Assemblytics: compares structural variations of assemblies versus a reference genome
+   * MINIMAP2: allow mapping of refference genome against long_read of organism
+   * Sniffle : descriptive information about the number of structural variation on the assembly
+   * R : Is use for the draw the report
+
+Included tools :
+
+* BUSCO version >= 5.1.2
+* QUAST version >= 5.0.2
+* TAPESTRY 
+* MUMMER version >= 4.0.0
+* Assemblytics version >= 1.2.1
+* MINIMAP2 version >= 2.18
+* Sniffle : python versions >= 3.7
+* R version >= 3.6.3
+
+Optional ILLUMINA step
+......................
+
+You can activate or deactivate ILLUMINA step; if you have short reads ILLUMINA of your organims then switch to *ILLUMINA=True* in the ``config.yaml``  file.
+
+Directed acyclic graphs (DAGs) show the differences between deactivated (ILLUMINA=False):
+
+.. image:: _images/schema_pipeline_global-QUALITY.png
+   :target: _images/schema_pipeline_global-QUALITY.png
+   :alt: ILLUMINA_FALSE
+
+and activated ILLUMINA step on configuration file (ILLUMINA=True):
+
+.. image:: _images/PodiumASM_illumina.png
+   :target: _images/PodiumASM_illumina.png
+   :alt: ILLUMINA_TRUE
+   
+   
+   
+.. note::
+   * ILLUMINA : this rule will calculates remapping stats using Illumina reads over assemblies
+   
+   
+Included tools :
+
+* SAMTOOLS version >= 1.15.1
+* BWA version >= 0.7.17

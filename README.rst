@@ -16,14 +16,14 @@ Check the doc's homepage to see how to install and use our workflow !
 
 **Homepage:** `https://workflow_kmer.readthedocs.io/en/latest/ <https://workflow-kmer.readthedocs.io/en/latest/>`_
 
-Using reads fastq of lot of accessions obtained by illumina
+Using reads fastq (NGS) of lot of accessions obtained by illumina
 sequencing can help to know origin of polyploid organisms like
 sugarcane. Indeed few tools exist and can work with very polyploidic 
 genomes and its very complex to analyse this kind of genomes.  
 
 **KMER_Workflow is able to do that!** KMER_Workflow is an open-source, scalable,
 modulable and traceable snakemake pipeline, able to launch multiple
-tools in parallel and providing help for obtaining the true origin of your accessions.
+tools in parallel and providing help for obtaining the shared information between differents individuals.
 It uses methods based on KMER sharing by all accessions.
 
 Citation

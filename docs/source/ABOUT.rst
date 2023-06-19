@@ -88,10 +88,11 @@ Included tools :
 * perl versions >= 5.16.3
 
 .. warning::
-   Make sure to install the next perl library : - GD::Simple
-                                                - GD::SVG
-                                                - Data::Dumper
-                                                - Getopt::Long
+   Make sure to install the next perl library : 
+   - GD::Simple
+   - GD::SVG
+   - Data::Dumper
+   - Getopt::Long
    
 
 

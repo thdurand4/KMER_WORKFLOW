@@ -31,7 +31,7 @@ A variety of useful tools are implemented to check the accuracy of assemblies.
    :target: _images/dag.png
    :alt: kmer_step_one
    :width: 80px
-   :height: 100px
+   :height: 500px
 
 
 PodiumASM checks the quality of the assemblies with using these tools:

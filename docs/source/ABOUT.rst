@@ -94,6 +94,11 @@ Included tools :
    - Data::Dumper
    - Getopt::Long
    
+Exemple of final graph of the pipeline : 
+
+.. image:: _images/kmer_graph.svg
+   :target: _images/kmer_graph.svg
+   :alt: KMER_GRAPH
 
 
 Directed acyclic graphs (DAGs) show the differences between deactivated (ILLUMINA=False):

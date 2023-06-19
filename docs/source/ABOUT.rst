@@ -58,13 +58,31 @@ Next the pipeline will make some steps to merge all information of count kmers o
 Theses steps use only bash command they are no included tools. 
 
 .. warning::
-   * MEMORY: MAKE SURE TO ADAPT NUMBER OF THREADS AND MEMORY PER CPU IN THE CLUSTER CONFIG FILES IF ONE OF THIS STEP FAILED 
+   * MEMORY: MAKE SURE TO ADAPT NUMBER OF THREADS AND MEMORY PER CPU IN THE ``cluster_config.yaml`` FILE IF ONE OF THIS STEP FAILED 
 
 
 Calculate intersection of KMERS between individuals
 -----------------------------
 
-You can activate or deactivate ILLUMINA step; if you have short reads ILLUMINA of your organims then switch to *ILLUMINA=True* in the ``config.yaml``  file.
+When the merged table of kmer is created the pipeline will use this table to calculate intersection of KMERS over all individuals and provides an other table to make the kmer graph (upset plot)
+
+You can change parameters of this script in the ``config.yaml`` file. 
+
+.. note::
+   *COUNT_INTERSECTION.PY: Is the custom python script which provides the table to make the upset plot
+
+Included tools :
+
+* python versions >= 3.8.2
+
+UPSET PLOT , KMER intersection graph
+-----------------------------
+
+Last step of this pipeline is to make the upset plot 
+
+.. note::
+   *GRAPH_KMER_V3.PL: Is the custom perl script which make the final result of the pipeline : UPSET PLOT OF SHARED KMER BETWEEN ALL INDIVIDUALS
+
 
 Directed acyclic graphs (DAGs) show the differences between deactivated (ILLUMINA=False):
 

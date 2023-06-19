@@ -30,6 +30,7 @@ A variety of useful tools are implemented to check the accuracy of assemblies.
 .. image:: _images/kmer_step_1.png
    :target: _images/kmer_step_1.png
    :alt: kmer_step_one
+   :width: 100px
 
 
 PodiumASM checks the quality of the assemblies with using these tools:

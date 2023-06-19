@@ -101,28 +101,7 @@ Exemple of final graph of the pipeline :
    :alt: KMER_GRAPH
 
 
-Directed acyclic graphs (DAGs) show the differences between deactivated (ILLUMINA=False):
-
-.. image:: _images/schema_pipeline_global-QUALITY.png
-   :target: _images/schema_pipeline_global-QUALITY.png
-   :alt: ILLUMINA_FALSE
-
-and activated ILLUMINA step on configuration file (ILLUMINA=True):
-
-.. image:: _images/PodiumASM_illumina.png
-   :target: _images/PodiumASM_illumina.png
-   :alt: ILLUMINA_TRUE
-   
-   
-   
-.. note::
-   * ILLUMINA : this rule will calculates remapping stats using Illumina reads over assemblies
-   
-   
-Included tools :
-
-* SAMTOOLS version >= 1.15.1
-* BWA version >= 0.7.17
+Directed acyclic graphs (DAGs) show all step of the pipeline:
 
 
 .. image:: _images/dag.png

@@ -1,6 +1,6 @@
 .. raw:: html
 
-   <img src="https://raw.githubusercontent.com/thdurand4/PodiumASM/main/docs/source/_images/PodiumASM_logo.png" align="right" alt="podiumASM Logo">
+   <img src="https://raw.githubusercontent.com/thdurand4/PodiumASM/main/docs/source/_images/logo.png" align="right" alt="podiumASM Logo">
 
 |PythonVersions| |SnakemakeVersions|
 
@@ -11,6 +11,8 @@ About KMER_Workflow
 ===============
 
 |readthedocs|
+
+Check the doc's homepage to see how to install and use our workflow !
 
 **Homepage:** `https://workflow_kmer.readthedocs.io/en/latest/ <https://workflow-kmer.readthedocs.io/en/latest/>`_
 

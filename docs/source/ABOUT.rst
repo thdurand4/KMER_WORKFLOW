@@ -27,10 +27,10 @@ Sub_Sampling reads Illumina and count KMERS
 
 A variety of useful tools are implemented to check the accuracy of assemblies.
 
-.. image:: _images/kmer_step_1.png
-   :target: _images/kmer_step_1.png
+.. image:: _images/dag.png
+   :target: _images/dag.png
    :alt: kmer_step_one
-   :width: 150px
+   :width: 80px
    :height: 100px
 
 

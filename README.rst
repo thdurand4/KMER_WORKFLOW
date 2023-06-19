@@ -35,19 +35,6 @@ _______
 * Théo Durand (CIRAD)
 * Olivier Garsmeur (CIRAD)
 
-
-Useful notes
-============
-
-Before launching KMER_Workflow make sur to have installed pythons librairies :
-
-- click
-- pandas
-- tqmd
-- functools
-
-Curently work on muse cluster of CIRAD
-
 License
 =======
 

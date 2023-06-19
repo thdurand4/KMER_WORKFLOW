@@ -1,7 +1,6 @@
-.. image:: logo/téléchargement.png
-   :target: logo/téléchargement.png
-   :align: center
-   :alt: Workflow_KMER Logo
+.. raw:: html
+
+   <img src="https://raw.githubusercontent.com/thdurand4/PodiumASM/main/docs/source/_images/PodiumASM_logo.png" align="right" alt="podiumASM Logo">
 
 |PythonVersions| |SnakemakeVersions|
 

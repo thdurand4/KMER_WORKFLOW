@@ -25,31 +25,29 @@ KMER_WORKFLOW generates an upset plot (Graph) containing all information about h
 Sub_Sampling reads Illumina and count KMERS
 -----------------------------
 
-A variety of useful tools are implemented to check the accuracy of assemblies.
+The first step of KMER_WORKFLOW is to sub sampling reads of all of individuals.
+The pipeline will take the number of reads to sub sampling for each paired. 
 
+For example if you wante to sub sampling PAIRED data
 
-PodiumASM checks the quality of the assemblies with using these tools:
-
+.. warning::
+   * CONTAMINATION: BE CAREFUL MAKE SUR YOURS DATA DOESN'T CONTAINS CONTAMINATION MAYBE BEFORE LAUNCH PIPELINE USE TOOLS LIKE KRAKEN TO CHECK POSSIBLE CONTAMINATION.
+   * NUMBER OF READS: MAKE SUR YOURS DATA CONTAINS ENOUGHT READS TO SUBSAMPLING. FOR EXEMPLE IF YOU HAVE _R1.fq.gz AND _R2.fq.gz AND YOU WANT SUB SAMPLING 10 MILLIONS MAKE SURE TO HAVE 5 MILLIONS IN BOTH.
+   
 .. note::
-   * BUSCO: helps to check if you have a good assembly, by searching the expected single-copy lineage-conserved orthologs in any newly sequenced genome from an appropriate phylogenetic clade.
-   * QUAST: a good starting point to evaluate the quality of assemblies, provides many helpful contiguity statistics and metrics.
-   * TAPESTRY: allows to detect telomere on assembled contigs.
-   * MUMMER : Use to align reference between assembly. Usefull for assemblytics tool
-   * Assemblytics: compares structural variations of assemblies versus a reference genome
-   * MINIMAP2: allow mapping of refference genome against long_read of organism
-   * Sniffle : descriptive information about the number of structural variation on the assembly
-   * R : Is use for the draw the report
+   * SEQTK: Seqtk is the tool use to subsampling data.
 
 Included tools :
 
-* BUSCO version >= 5.1.2
-* QUAST version >= 5.0.2
-* TAPESTRY 
-* MUMMER version >= 4.0.0
-* Assemblytics version >= 1.2.1
-* MINIMAP2 version >= 2.18
-* Sniffle : python versions >= 3.7
-* R version >= 3.6.3
+* Seqtk version >= 1.3-r106
+
+Next the pipeline will count KMERS of each individuals
+
+.. note::
+   *KAT HIST: K-mer Analysis Toolkit to count Kmer and get binary output
+   *JELLYFISH: 
+
+
 
 Optional ILLUMINA step
 ......................

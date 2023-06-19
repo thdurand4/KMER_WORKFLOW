@@ -100,9 +100,7 @@ Exemple of final graph of the pipeline :
    :target: _images/graph_kmer.svg
    :alt: KMER_GRAPH
 
-
-Directed acyclic graphs (DAGs) show all step of the pipeline:
-
+**Directed acyclic graphs (DAGs) show all step of the pipeline:**
 
 .. image:: _images/dag.png
    :target: _images/dag.png

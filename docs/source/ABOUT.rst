@@ -3,19 +3,19 @@
    :align: center
    :alt: KMER Logo
 
-Today, assembly a genome using long reads from either Oxford Nanopore Technologies or Pacific Biosciences is really powerful, in particular to solve repeats and structural variants, for prokaryotic as well as for eukaryotic genomes. Such technologies provide assemblies that are increased in contiguity and accuracy.
+Today, get an assembly of large polyploid genome is very complicated and it's hard to compare lot of individuals of this polyploid species, in particular to compare sequences of many individuals.
 
-Due to the daily deluge of data sequences and the increasing number of released tools that are even updated every week, many species see having their genome assembled in almost chromosome-scale, and that’s great...
+Due to the daily deluge of data sequences the number of data increase and need to be analyse ...
 
-However a huge question remains:
+So a huge question remains:
 
-*"But which assembly tool will provide the best result for your favorite organism?"*
+*"How can i compare many individuals of a speicies without assembly?"*
 
-To that anguishing idea, we can answer: **PodiumASM can help you!**
+To that anguishing idea, we can answer: **KMER_WORFLOW can help you!**
 
-PodiumASM is is an open-source, scalable, modulable and traceable snakemake pipeline, able to compare multiple long read assemblies obtained from multiple assemblers tools. The workflow PodiumASM can help you to choose the best assemblies among all possibilities.
+KMER_WORKFLOW is is an open-source, scalable, modulable and traceable snakemake pipeline, able to compare multiple data short read (NGS) obtained from illumina sequencing by counting the number of shared kmers. The workflow KMER_WORKFLOW can help you to find which individuals share sequences informations to other.
 
-Optional rule can be activate or not according to user’s requests in PodiumASM. PodiumASM also generates a report compiling information obtained at each step, to help user to decide which assembly results to work with.
+KMER_WORKFLOW generates an upset plot (Graph) containing all information about how much kmer are shared by how much indivuduals and the sequences of them.
 
 
 .. contents:: Table of Contents

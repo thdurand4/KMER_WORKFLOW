@@ -45,8 +45,8 @@ Included tools :
 Next the pipeline will count KMERS of each individuals
 
 .. note::
-   *KAT HIST: K-mer Analysis Toolkit to count Kmer and get binary output.
-   *JELLYFISH DUMP: Provide count of kmer in human readable format. 
+   * KAT HIST: K-mer Analysis Toolkit to count Kmer and get binary output.
+   * JELLYFISH DUMP: Provide count of kmer in human readable format. 
    
 Included tools :
 
@@ -81,7 +81,7 @@ UPSET PLOT , KMER intersection graph
 Last step of this pipeline is to make the upset plot 
 
 .. note::
-   *GRAPH_KMER_V3.PL: Is the custom perl script which make the final result of the pipeline : UPSET PLOT OF SHARED KMER BETWEEN ALL INDIVIDUALS
+   * GRAPH_KMER_V3.PL: Is the custom perl script which make the final result of the pipeline : UPSET PLOT OF SHARED KMER BETWEEN ALL INDIVIDUALS
 
 
 Directed acyclic graphs (DAGs) show the differences between deactivated (ILLUMINA=False):

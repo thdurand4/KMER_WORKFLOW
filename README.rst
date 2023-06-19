@@ -41,10 +41,10 @@ Licencied under `CeCill-C <http://www.cecill.info/licences/Licence_CeCILL-C_V1-e
 
 Intellectual property belongs to `CIRAD <https://www.cirad.fr/>`_ and authors.
 
-.. |PythonVersions| image:: https://img.shields.io/badge/python-≥3.8%2B-blue
+.. |PythonVersions| image:: https://img.shields.io/badge/python-≥3.8.2%2B-blue
    :target: https://www.python.org/downloads
 
-.. |SnakemakeVersions| image:: https://img.shields.io/badge/snakemake-≥5.13.0-brightgreen.svg
+.. |SnakemakeVersions| image:: https://img.shields.io/badge/snakemake-≥7.15.1-brightgreen.svg
    :target: https://snakemake.readthedocs.io
    
 .. |readthedocs| image:: https://pbs.twimg.com/media/E5oBxcRXoAEBSp1.png

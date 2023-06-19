@@ -1,6 +1,6 @@
 .. raw:: html
 
-   <img src="https://raw.githubusercontent.com/thdurand4/PodiumASM/main/docs/source/_images/logo.png" align="right" alt="podiumASM Logo">
+   <img src="https://raw.githubusercontent.com/thdurand4/KMER_WORKFLOW/main/docs/source/_images/logo.png" align="right" alt="KMER Logo">
 
 |PythonVersions| |SnakemakeVersions|
 

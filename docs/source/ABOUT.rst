@@ -22,14 +22,14 @@ KMER_WORKFLOW generates an upset plot (Graph) containing all information about h
    :depth: 2
    :backlinks: entry
 
-Quality Control of assemblies
+Sub_Sampling reads Illumina and count KMERS
 -----------------------------
 
 A variety of useful tools are implemented to check the accuracy of assemblies.
 
-.. image:: _images/schema_pipeline_global-QUALITY.png
-   :target: _images/schema_pipeline_global-QUALITY.png
-   :alt: QUALITY
+.. image:: _images/kmer_step_1.png
+   :target: _images/kmer_step_1.png
+   :alt: kmer_step_one
 
 
 PodiumASM checks the quality of the assemblies with using these tools:

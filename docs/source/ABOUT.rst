@@ -69,7 +69,7 @@ When the merged table of kmer is created the pipeline will use this table to cal
 You can change parameters of this script in the ``config.yaml`` file. 
 
 .. note::
-   *COUNT_INTERSECTION.PY: Is the custom python script which provides the table to make the upset plot
+   * COUNT_INTERSECTION.PY: Is the custom python script which provides the table to make the upset plot
 
 Included tools :
 
@@ -82,6 +82,17 @@ Last step of this pipeline is to make the upset plot
 
 .. note::
    * GRAPH_KMER_V3.PL: Is the custom perl script which make the final result of the pipeline : UPSET PLOT OF SHARED KMER BETWEEN ALL INDIVIDUALS
+   
+Included tools :
+
+* perl versions >= 5.16.3
+
+.. warning::
+   Make sure to install the next perl library : - GD::Simple
+                                                - GD::SVG
+                                                - Data::Dumper
+                                                - Getopt::Long
+   
 
 
 Directed acyclic graphs (DAGs) show the differences between deactivated (ILLUMINA=False):

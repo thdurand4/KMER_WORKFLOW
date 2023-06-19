@@ -33,7 +33,6 @@ Authors
 _______
 
 * Théo Durand (CIRAD)
-* Nicolas Pompidor (CIRAD)
 * Olivier Garsmeur (CIRAD)
 
 

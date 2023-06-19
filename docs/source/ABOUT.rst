@@ -99,6 +99,11 @@ Exemple of final graph of the pipeline :
 .. image:: _images/graph_kmer.svg
    :target: _images/graph_kmer.svg
    :alt: KMER_GRAPH
+ 
+ The number next to the name of the individuals represents kmers only shared by himself (singleton). 
+ Next to this number there is a barplot to have a representation of the quantity of singleton
+ 
+ At the top of the graph we got one number which represent number of shared kmer for this columns and the XXX.fasta represents in which files are the sequences of shared KMERS
 
 **Directed acyclic graphs (DAGs) show all step of the pipeline:**
 

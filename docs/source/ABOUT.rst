@@ -25,14 +25,15 @@ KMER_WORKFLOW generates an upset plot (Graph) containing all information about h
 Sub_Sampling reads Illumina and count KMERS
 -----------------------------
 
-The first step of KMER_WORKFLOW is to sub sampling reads of all of individuals.
-The pipeline will take the number of reads to sub sampling for each paired. 
+The first step of KMER_WORKFLOW is to random sub sampling reads of all of individuals.
+The pipeline will take the number of reads to sub sampling for each paired and merged the result. 
 
-For example if you wante to sub sampling PAIRED data
+For example if you wante to sub sampling 10 Millions of reads of PAIRED data you need to precise 5 Millions of reads to sub sampling for each paired
+However if you have single data you can make 10 Milions on the unpaired data. 
 
 .. warning::
-   CONTAMINATION: BE CAREFUL MAKE SUR YOURS DATA DOESN'T CONTAINS CONTAMINATION MAYBE BEFORE LAUNCH PIPELINE USE TOOLS LIKE KRAKEN TO CHECK POSSIBLE CONTAMINATION.
-   NUMBER OF READS: MAKE SUR YOURS DATA CONTAINS ENOUGHT READS TO SUBSAMPLING. FOR EXEMPLE IF YOU HAVE _R1.fq.gz AND _R2.fq.gz AND YOU WANT SUB SAMPLING 10 MILLIONS MAKE SURE TO HAVE 5 MILLIONS IN BOTH.
+   * CONTAMINATION: BE CAREFUL MAKE SUR YOURS DATA DOESN'T CONTAINS CONTAMINATION MAYBE BEFORE LAUNCH PIPELINE USE TOOLS LIKE KRAKEN TO CHECK POSSIBLE CONTAMINATION.
+   * NUMBER OF READS: MAKE SUR YOURS DATA CONTAINS ENOUGHT READS TO SUBSAMPLING. FOR EXEMPLE IF YOU HAVE _R1.fq.gz AND _R2.fq.gz AND YOU WANT SUB SAMPLING 10 MILLIONS MAKE SURE TO HAVE 5 MILLIONS IN BOTH.
    
 .. note::
    * SEQTK: Seqtk is the tool use to subsampling data.
@@ -44,13 +45,24 @@ Included tools :
 Next the pipeline will count KMERS of each individuals
 
 .. note::
-   *KAT HIST: K-mer Analysis Toolkit to count Kmer and get binary output
-   *JELLYFISH: 
+   *KAT HIST: K-mer Analysis Toolkit to count Kmer and get binary output.
+   *JELLYFISH DUMP: Provide count of kmer in human readable format. 
+   
+Included tools :
+
+* kat version >= 2.4.2
+* jellyfish version >= 2.3.0
+
+Next the pipeline will make some steps to merge all information of count kmers of all individuals to make a final merged table of kmer count for each individuals
+
+Theses steps use only bash command they are no included tools. 
+
+.. warning::
+   * MEMORY: MAKE SURE TO ADAPT NUMBER OF THREADS AND MEMORY PER CPU IN THE CLUSTER CONFIG FILES IF ONE OF THIS STEP FAILED 
 
 
-
-Optional ILLUMINA step
-......................
+Calculate intersection of KMERS between individuals
+-----------------------------
 
 You can activate or deactivate ILLUMINA step; if you have short reads ILLUMINA of your organims then switch to *ILLUMINA=True* in the ``config.yaml``  file.
 

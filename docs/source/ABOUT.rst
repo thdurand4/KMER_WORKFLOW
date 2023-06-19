@@ -94,7 +94,7 @@ Included tools :
    - Data::Dumper
    - Getopt::Long
    
-Exemple of final graph of the pipeline : 
+**Exemple of final graph of the pipeline :** 
 
 The number next to the name of the individuals represents kmers only shared by himself (singleton). 
 Next to this number there is a barplot to have a representation of the quantity of singleton

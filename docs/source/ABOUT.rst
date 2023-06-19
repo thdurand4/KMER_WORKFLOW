@@ -97,9 +97,9 @@ Included tools :
 Exemple of final graph of the pipeline : 
 
 The number next to the name of the individuals represents kmers only shared by himself (singleton). 
- Next to this number there is a barplot to have a representation of the quantity of singleton
+Next to this number there is a barplot to have a representation of the quantity of singleton
  
- At the top of the graph we got one number which represent number of shared kmer for this columns and the XXX.fasta represents in which files are the sequences of shared KMERS
+At the top of the graph we got one number which represent number of shared kmer for this columns and the XXX.fasta represents in which files are the sequences of shared KMERS
 
 
 .. image:: _images/graph_kmer.svg

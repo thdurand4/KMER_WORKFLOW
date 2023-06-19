@@ -96,8 +96,8 @@ Included tools :
    
 Exemple of final graph of the pipeline : 
 
-.. image:: _images/kmer_graph.svg
-   :target: _images/kmer_graph.svg
+.. image:: _images/graph_kmer.svg
+   :target: _images/graph_kmer.svg
    :alt: KMER_GRAPH
 
 

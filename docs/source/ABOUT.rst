@@ -19,7 +19,7 @@ KMER_WORKFLOW generates an upset plot (Graph) containing all information about h
 
 
 .. contents:: Table of Contents
-   :depth: 2
+   :depth: 1
    :backlinks: entry
 
 Sub_Sampling reads Illumina and count KMERS

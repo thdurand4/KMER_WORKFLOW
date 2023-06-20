@@ -22,7 +22,7 @@ class bcolors:
 
 
 
-class Kmerworkflow(SnakEcdysis):
+class KmerWorkflow(SnakEcdysis):
     """
     to read file config
     """

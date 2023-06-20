@@ -1,0 +1,84 @@
+__default__:
+    cpus-per-task : 4
+    mem-per-cpu : 10G
+    partition : agap_short
+    log : "slurm_logs/log/{rule}_{wildcards}.out"
+    error : 'slurm_logs/error/{rule}_{wildcards}.error'
+    job-name : "{rule}.{wildcards}"
+
+check_nb_reads:
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 10G 
+ 
+sub_set:
+    cpus-per-task: 3
+    partition: agap_short
+    mem-per-cpu : 10G
+    
+create_list_fastq:
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 1G
+    
+cat_fastq:
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 1G
+    
+kmer_count: 
+    cpus-per-task: 4
+    partition: agap_short
+    mem-per-cpu : 16G
+
+binary_to_tbl:
+    cpus-per-task: 4
+    partition: agap_long
+    mem-per-cpu : 5G
+
+cut_coverage:
+    cpus-per-task: 1
+    partition: agap_long
+    mem-per-cpu : 5G
+    
+regroup_kmer:
+    cpus-per-task: 1
+    partition: agap_long
+    mem-per-cpu : 20G
+
+sorted_kmer:
+    cpus-per-task: 1
+    partition: agap_long
+    mem-per-cpu : 20G
+
+split_kmer_by_line:
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 5G
+
+sub_table:
+    cpus-per-task: 1
+    partition: agap_long
+    mem-per-cpu : 10G
+    
+merge_split: 
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 20G
+    nodes : 1
+     
+merge_final: 
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 10G
+    nodes : 1
+        
+intersection_table: 
+    cpus-per-task: 1
+    partition: agap_short
+    mem-per-cpu : 120G
+    
+upset_plot: 
+    cpus-per-task: 1
+    partition: agap_normal
+    mem-per-cpu : 1G

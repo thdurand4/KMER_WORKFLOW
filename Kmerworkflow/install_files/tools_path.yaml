@@ -1,0 +1,17 @@
+## BUILD SINGULARITY IMAGES PATH
+## PLEASE FILL IN SINGULARITY IMAGES PATH IF YOU HAVE CHOSEN INSTALL WITH ENV MODE SINGULARITY (option --env singularity)
+## PLEASE FILL IN "ENVMODULES" SECTION IF YOU HAVE CHOSEN INSTALL WITH ENV MODE MODULES (option --env modules)
+## WARNING!!! DO NOT ERASE LINES OR COMMENT THEM !  è_é
+
+SINGULARITY:
+    REPORT : 'INSTALL_PATH/containers/Singularity.report.sif'
+    TOOLS : 'INSTALL_PATH/containers/Singularity.tools.sif'
+
+# Is and exemple of tools path
+ENVMODULE:
+    PYTHON : "python/3.8.2" #Work with python version >= 3.8.2
+    SEQTK : "seqtk" #Work with seqtk version >= 1.3-r106
+    KAT : "kat" #Work with kat version >= 2.4.2
+    JELLYFISH : "jellyfish/2.3.0" #Work with jellyfish version >=2.3.0
+    PERL : "perllib/5.16.3" #Work with perl libraries GD::Simple - GD::SVG - Data::Dumper - Getopt::Long
+

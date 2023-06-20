@@ -1,0 +1,34 @@
+############################################# Part I : Path of Input and Output data ############################################
+
+DATA:
+    ############################################################################
+    #Give information about path of accessions files , path of the scripts and path where results will be writen
+    OUTPUT_DIR: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/RESULTS_FASTQ_UNCONTAMINATED/"  #Directory where all the results will be written
+    SCRIPTS: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/scripts/"  #Directory of the scripts needed for the workflow
+    LIST_ACCESSION: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/list_fastq_uncontaminate.txt"  #File needed to lauch the workflow it will contain "Accessions Path/to/fastq.gz black"
+    LIST_COULEURS: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/list_couleur"  #Give the path of the file that you need to make the graph to colors individual This file will be automaticaly created
+    
+
+    ###########################################################################
+
+############################################# Part II : Parameters of tools ############################################
+
+TOOLS_PARAMS:
+    ##########################################################################
+    #Choose what you want for tools
+    KAT_HIST: "-t 4 --dump_hash --mer_len 50"  #KAT PARAMETERS
+    JELLYFISH_DUMP: "-c -t" #JELLYFISH PARAMETERS Don't change the "-c" 
+    CUT_COVERAGE: "10" #10 is default value it will check if the kmer is seen at minimum 10 times
+    INTERSECT_TABLE: "--start 1 --end 400" #check script count_intersection.py to see all params possible 
+    FULL_TABLE: "no" #yes OR no : If yes give name in OPTIONAL FULL_INTERSECT_NAME else do nothing
+
+
+############################################# Part III : Optionals Rules ############################################
+
+OPTIONAL:
+    ############################################################################
+    #Choose the name of final tables
+    FULL_INTERSECT_NAME: "fastq_uncontaminated_all"   #Give the name of the full intersection table
+    PARSED_INTERSECT_NAME: "graph_1_400_fastq_uncontaminated" #Give the name of the table which will be use to make the graph
+    UPSET_PLOT: "graph_kmer_uncontaminated"  #Give the name of the graph (upset-plot)
+    CHECK_NB_READS: False

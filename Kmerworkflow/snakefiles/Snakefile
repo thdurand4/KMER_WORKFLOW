@@ -1,0 +1,628 @@
+import os
+import random
+import re
+from os.path import exists
+from collections import defaultdict
+import Kmerworkflow
+from Kmerworkflow.module import Kmerworkflow
+
+kmer_obj = KMER_WORKFLOW(Kmerworkflow.dico_tool, workflow=workflow, config=config)
+tools_config = kmer_obj.tools_config
+cluster_config = kmer_obj.cluster_config
+
+
+
+configfile: "config/config.yaml"
+
+
+
+
+#Stockage des chemins des scripts et des accessions dans des variables à partir du fichier config
+output_dir = config['DATA']['OUTPUT_DIR']
+script_dir = config['DATA']['SCRIPTS']
+full_intersect_name = config['OPTIONAL']['FULL_INTERSECT_NAME']
+parsed_intersect_name = config['OPTIONAL']['PARSED_INTERSECT_NAME']
+upset_plot = config['OPTIONAL']['UPSET_PLOT']
+fastq = config['DATA']['LIST_ACCESSION']
+couleur = config["DATA"]["LIST_COULEURS"]
+cut_cov=config["TOOLS_PARAMS"]["CUT_COVERAGE"]
+awk = "{{print $1}}"
+count_kmer_file_temp ="${{file}}"
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+
+all_reads = defaultdict(list)
+dico_couleur = defaultdict(list)
+uniq_color = set()
+for IDX, line in enumerate(open(fastq,"r")):
+	try:
+		ID = line.rstrip().split("\t")[0]
+		FASTQ = line.rstrip().split("\t")[1]
+		SUBSET = line.rstrip().split("\t")[2]
+		SEED = line.rstrip().split("\t")[3]
+		COULEUR = line.rstrip().split("\t")[4]
+		uniq_color.add(ID)
+		dico_couleur[ID].append(COULEUR)
+	except IndexError:
+		raise Exception(f"{bcolors.BOLD}{bcolors.FAIL}A field of Information file is empty please make sure to full all of the fields (5 fields)")
+
+        prefix = re.sub(r"\.\w+.gz",f"_{IDX}",os.path.basename(FASTQ))
+        all_reads[prefix] = {"idx": IDX, "name": ID, "reads": FASTQ, "color": COULEUR, "seed": SEED, "subset" : SUBSET}
+
+
+
+with open(couleur,"w") as f3:
+    for elem in uniq_color:
+        f3.write(elem + "\t" + str(dico_couleur[elem][0])+"\n")
+
+
+#print(all_reads)
+os.system("sort -o"+couleur+" "+couleur )
+
+NAME = {}
+for k , v in all_reads.items():
+    NAME[k] = all_reads[k]["name"]
+
+log_dir = f"{output_dir}LOGS/"
+
+# Récupération du basename de nos accessions
+
+
+
+#print(MULTIPLE_ACC)
+
+def get_threads(rule, default):
+    """
+    give threads or 'cpus-per-task from cluster_config rule : threads to SGE and cpus-per-task to SLURM
+    """
+    if rule in cluster_config and 'threads' in cluster_config[rule]:
+        return int(cluster_config[rule]['threads'])
+    elif '__default__' in cluster_config and 'threads' in cluster_config['__default__']:
+        return int(cluster_config['__default__']['threads'])
+    return default
+
+
+rule finale:
+    input:
+        upset_png=f"{output_dir}7_UPSET_PLOT/{upset_plot}.svg"
+
+
+rule check_nb_reads :
+    threads: get_threads("check_nb_reads",1)
+    input:
+        fastq = lambda wildcards: all_reads[wildcards.prefix]["reads"] if config["OPTIONAL"]["CHECK_NB_READS"] else []
+    output:
+        info_read = f"{output_dir}1_BIS_SUB_SET_READS/{{ID}}/{{ID}}_{{prefix}}_info.txt"
+    params:
+        subset = lambda wildcards: all_reads[wildcards.prefix]["subset"]
+    log:
+        error = f'{log_dir}CHECK_NB_READS/{{prefix}}/{{ID}}.e',
+        output = f'{log_dir}CHECK_NB_READS/{{prefix}}/{{ID}}.o'
+    message:
+        f"""
+         Running {{rule}}
+            Input:
+                - Fastq ALL : {{input.fastq}}
+            Output:
+                - Fastq INFO: {{output.info_read}}
+            Others
+                - Threads : {{threads}}
+                - LOG error: {{log.error}}
+                - LOG output: {{log.output}}
+            Command:
+                - python3 {script_dir}count_reads.py --input {{input.fastq}} --output {{output.info_read}} --subset {{params.subset}} 1> {{log.output}} 2>{{log.error}}
+
+        """
+    envmodules:
+        tools_config["ENVMODULE"]["PYTHON"]
+    shell:
+        f"python3 {script_dir}count_reads.py --input {{input.fastq}} --output {{output.info_read}} --subset {{params.subset}} 1> {{log.output}} 2>{{log.error}}"
+
+
+
+
+rule sub_set :
+    threads: get_threads("sub_set",5)
+    input:
+        fastq = lambda wildcards: all_reads[wildcards.prefix]["reads"]
+    output:
+        reads_sub_set = f"{output_dir}1_BIS_SUB_SET_READS/{{ID}}/{{ID}}_{{prefix}}.fastq.gz"
+    params:
+        subset = lambda wildcards: all_reads[wildcards.prefix]["subset"],
+        seed = lambda wildcards: all_reads[wildcards.prefix]["seed"],
+        uncompressed = f"{output_dir}1_BIS_SUB_SET_READS/{{ID}}/{{ID}}_{{prefix}}.fastq",
+        id_dir = f"{output_dir}1_BIS_SUB_SET_READS/{{ID}}/"
+    log :
+        error =  f'{log_dir}SUB_SET_READS/{{prefix}}/{{ID}}.e',
+        output = f'{log_dir}SUB_SET_READS/{{prefix}}/{{ID}}.o'
+    message:
+            f"""
+             Running {{rule}}
+                Input:
+                    - Fastq ALL : {{input.fastq}}
+                Output:
+                    - Fastq 20M: {{output.reads_sub_set}}
+                Others
+                    - Threads : {{threads}}
+                    - LOG error: {{log.error}}
+                    - LOG output: {{log.output}}
+                Command:
+                    - seqtk sample {{input.fastq}} -s {{params.seed}} {{params.subset}} > {{params.uncompressed}} 2>{{log.error}}
+                    - gzip {{params.uncompressed}} 2>{{log.error}}
+                    
+                
+
+            """
+    envmodules:
+        tools_config["ENVMODULE"]["SEQTK"]
+    shell:
+        f"""
+        (seqtk sample {{input.fastq}} -s {{params.seed}} {{params.subset}} > {{params.uncompressed}}
+        gzip {{params.uncompressed}}) 2>{{log.error}}
+        """
+
+rule create_list_fastq :
+    threads: get_threads("create_list_fastq",1)
+    input:
+        fastq = expand(f"{output_dir}1_BIS_SUB_SET_READS/{{ID}}/{{ID}}_{{prefix}}.fastq.gz", zip, ID = NAME.values(), prefix=all_reads.keys())
+    output:
+        list_fastq= temp(f"{output_dir}1_MERGED_FASTQ/list_fastq.txt")
+    params:
+        rep_id = expand(rules.sub_set.params.id_dir, ID = NAME.values())
+    log:
+        error =  f'{log_dir}CREATE_LIST_FASTQ/error.e',
+        output = f'{log_dir}CREATE_LIST_FASTQ/error.o'
+    message:
+                f"""
+                 Running {{rule}}
+                    Input:
+                        - Fastq ALL : {{input.fastq}}
+                    Output:
+                        - Fastq 20M: {{output.list_fastq}}
+                    Others
+                        - Threads : {{threads}}
+                        - LOG error: {{log.error}}
+                        - LOG output: {{log.output}}
+                        
+                    Command:
+                        - echo {{params.rep_id}} > first.txt
+                        - sed -i s"/ /\n/"g first.txt
+                        - uniq first.txt > {{output.list_fastq}}
+                        - rm first.txt
+
+                """
+    shell:
+        f"""
+        (echo {{params.rep_id}} > first.txt
+        sed -i 's/ /\\n/g' first.txt
+        uniq first.txt > {{output.list_fastq}}
+        rm first.txt) 2> {{log.error}}
+        """
+
+rule cat_fastq :
+    threads: get_threads("cat_fastq",1)
+    input:
+        list_fastq=rules.create_list_fastq.output.list_fastq
+    output:
+        merged_fastq=f"{output_dir}1_MERGED_FASTQ/{{ID}}.fastq.gz"
+    params:
+        compress = rules.sub_set.params.id_dir
+    log:
+        error=f'{log_dir}CAT_FASTQ/error_{{ID}}.e',
+        output=f'{log_dir}CAT_FASTQ/error_{{ID}}.o'
+    message:
+        f"""
+                     Running {{rule}}
+                        Input:
+                            - Fastq ALL : {{input.list_fastq}}
+                        Output:
+                            - Fastq 20M: {{output.merged_fastq}}
+                        Others
+                            - Threads : {{threads}}
+                            - LOG error: {{log.error}}
+                            - LOG output: {{log.output}}
+
+                        Command:
+                            - cat {{input.list_fastq}} | grep {{wildcards.ID}} > {{wildcards.ID}}.txt
+                            - for line in `cat {{wildcards.ID}}.txt` ; do zcat $line* > {{output.merged_fastq}} | gzip; done
+                            - rm -rf {{wildcards.ID}}.txt {{params.compress}}
+
+                    """
+    shell:
+        """
+        (cat {input.list_fastq} | grep {wildcards.ID} > {wildcards.ID}.txt
+        for line in `cat {wildcards.ID}.txt` ; do cat $line* > {output.merged_fastq} | gzip; done
+        rm -rf {wildcards.ID}.txt {params.compress}) 2> {log.error}
+        """
+rule kmer_count :
+    threads: get_threads("kmer_count",4)
+    input:
+        acces_20M = rules.cat_fastq.output.merged_fastq
+    output:
+        binary_tab = temp(f"{output_dir}2_KMER_COUNT/BINARY_TABLE/{{ID}}/{{ID}}_binary.jf50")
+    params:
+        kat_options = config["TOOLS_PARAMS"]["KAT_HIST"],
+        wrong_name= f"{output_dir}2_KMER_COUNT/BINARY_TABLE/{{ID}}/{{ID}}_binary.jf50-hash.jf50"
+    log :
+        error =  f'{log_dir}KMER_COUNT/kmer_count_{{ID}}.e',
+        output = f'{log_dir}KMER_COUNT/kmer_count_{{ID}}.o'
+    message:
+            f"""
+             Running {{rule}}
+                Input:
+                    - Accession 20M : {{input.acces_20M}}
+                Output:
+                    - Binary File : {{output.binary_tab}}
+                Others
+                    - Threads : {{threads}}
+                    - LOG error: {{log.error}}
+                    - LOG output: {{log.output}}
+                Command
+                    - kat hist -o {{output.binary_tab}} {{params.kat_options}} {{input.acces_20M}} 1>{{log.output}} 2>{{log.error}}
+                    - mv {{params.wrong_name}} {{output.binary_tab}}
+
+            """
+    envmodules:
+        tools_config["ENVMODULE"]["KAT"]
+    shell:
+        """
+        kat hist -o {output.binary_tab} {params.kat_options} {input.acces_20M} 1>{log.output} 2>{log.error}
+        mv {params.wrong_name} {output.binary_tab}
+        """
+
+
+rule binary_to_tbl :
+    threads: get_threads("binary_to_tbl",4)
+    input:
+        binary_file = rules.kmer_count.output
+    output:
+        table_kmer = f"{output_dir}2_KMER_COUNT/TABLE/{{ID}}/{{ID}}_count_1X.tab.gz"
+    params:
+        jellyfish_dump = config["TOOLS_PARAMS"]["JELLYFISH_DUMP"],
+        name_uncompress = f"{output_dir}2_KMER_COUNT/TABLE/{{ID}}/{{ID}}_count_1X.tab"
+    log :
+        error = f'{log_dir}BINARY_TO_TBL/binary_to_tbl_{{ID}}.e',
+        output = f'{log_dir}BINARY_TO_TBL/binary_to_tbl_{{ID}}.o'
+    message:
+            f"""
+             Running {{rule}}
+                Input :
+                    - Binary File : {{input.binary_file}}
+                Output :
+                    - Tabulate 1X File : {{output.table_kmer}}
+                Others :
+                    - Threads : {{threads}}
+                    - LOG error : {{log.error}}
+                    - LOG output : {{log.output}}
+                Command :
+                    - jellyfish dump {{params.jellyfish_dump}} -o {{params.name_uncompress}} {{input.binary_file}} 1>{{log.output}} 2>{{log.error}}
+                    - gzip {{params.name_uncompress}}
+
+            """
+    envmodules:
+        tools_config["ENVMODULE"]["JELLYFISH"]
+    shell:
+        f"""
+        (jellyfish dump {{params.jellyfish_dump}} -o {{params.name_uncompress}} {{input.binary_file}}
+        gzip {{params.name_uncompress}}) 1>{{log.output}} 2>{{log.error}}
+        """
+
+rule cut_coverage :
+    threads: get_threads("cut_coverage",1)
+    input:
+        kmer_table=rules.binary_to_tbl.output.table_kmer
+    output:
+        kmer_sequences=f"{output_dir}2_KMER_COUNT/CUT_COVERAGE_{cut_cov}/{{ID}}_kmers_cut_{cut_cov}X.txt.gz"
+    log:
+        error=f'{log_dir}CUT_COVERAGE/cut_coverage_{{ID}}.e',
+        output=f'{log_dir}CUT_COVERAGE/cut_coverage_{{ID}}.o'
+    message:
+            f"""
+                Running {{rule}}
+                    Input :
+                        - Table Kmer : {{input.kmer_table}}
+                    Output :
+                        - KMER SEQUENCES : {{output.kmer_sequences}}
+                    Others :
+                        - Threads : {{threads}}
+                        - LOG error : {{log.error}}
+                        - LOG output : {{log.output}}
+                    Command :
+                        - zcat {{input.kmer_table}} | awk -F '\t' '$2 >= {cut_cov} {awk}' | gzip > {{output.kmer_sequences}} 2>{{log.error}}
+
+                """
+    shell:
+        f"""
+        zcat {{input.kmer_table}} | awk -F '\t' '$2 >= {cut_cov} {awk}' | gzip > {{output.kmer_sequences}} 2>{{log.error}}
+        """
+
+rule regroup_kmer :
+    threads: get_threads("regroup_kmer",1)
+    input:
+        kmer_sequences=expand(rules.cut_coverage.output.kmer_sequences, ID = NAME.values())
+    output:
+        merge_kmer_table=temp(f"{output_dir}3_MERGE_KMER/kmers_concat.txt")
+    log:
+        error=f'{log_dir}REGROUP_KMER/regroup_kmer.e',
+        output=f'{log_dir}REGROUP_KMER/regroup_kmer.o'
+    message:
+        f"""
+                    Running {{rule}}
+                        Input :
+                            - KMER Sequences : {{input.kmer_sequences}}
+                        Output :
+                            - Merge KMER TABLE : {{output.merge_kmer_table}}
+                        Others :
+                            - Threads : {{threads}}
+                            - LOG error : {{log.error}}
+                            - LOG output : {{log.output}}
+                        Command :
+                            - zcat {{input.kmer_sequences}} > {{output.merge_kmer_table}} 2>{{log.error}}
+
+                    """
+    shell:
+        f"""
+        zcat {{input.kmer_sequences}} > {{output.merge_kmer_table}} 2>{{log.error}}
+        """
+
+rule sorted_kmer :
+    threads: get_threads("sorted_kmer",1)
+    input:
+        merge_kmer_table= rules.regroup_kmer.output.merge_kmer_table
+    output:
+        sorted_kmer_uniq=temp(f"{output_dir}3_MERGE_KMER/kmers_sorted_dedup.txt.gz")
+    log:
+        error=f'{log_dir}SORTED_KMER/sorted_kmer.e',
+        output=f'{log_dir}SORTED_KMER/sorted_kmer.o'
+    message:
+        f"""
+            Running {{rule}}
+                Input :
+                    - KMER Sequences : {{input.merge_kmer_table}}
+                Output :
+                    - Merge KMER TABLE : {{output.sorted_kmer_uniq}}
+                Others :
+                    - Threads : {{threads}}
+                    - LOG error : {{log.error}}
+                    - LOG output : {{log.output}}
+                Command :
+                    - awk '!seen[$0]++' {{input.merge_kmer_table}} | sort | gzip > {{output.sorted_kmer_uniq}} 2>{{log.error}}
+
+            """
+    shell:
+        f"""
+        awk '!seen[$0]++' {{input.merge_kmer_table}} | sort | gzip > {{output.sorted_kmer_uniq}} 2>{{log.error}}
+        """
+
+checkpoint split_kmer_by_line:
+    """
+    Split list of kmer by X lines
+    """
+    threads: get_threads("split_by_chr",1)
+    input:
+        kmer_uniq =rules.sorted_kmer.output.sorted_kmer_uniq
+    output:
+        path_split=directory(f"{output_dir}4_SPLIT_KMER/LIST/")
+    log:
+        error = f'{log_dir}SPLIT_KMER/split_kmer.e',
+        output = f'{log_dir}SPLIT_KMER/split_kmer.o'
+    shell:
+        """
+        (mkdir -p {output.path_split}
+        zcat {input.kmer_uniq} | split -l 1000000 - {output.path_split}/kmers_sorted_dedup_set_
+        for file in {output.path_split}/kmers_sorted_dedup_set_*; do gzip $file; done) 1> {log.output} 2> {log.error}
+        """
+
+def get_split_kmer(wildcards):
+    ck_output = checkpoints.split_kmer_by_line.get(**wildcards).output[0]
+    spl, = glob_wildcards(os.path.join(ck_output,f"kmers_sorted_dedup_set_{{split}}.gz"))
+    return expand(f"{output_dir}5_MERGE_TABLE/BLOCK/count_1x_set_{{split}}.tab.gz",split=spl)
+
+
+def get_split_test(wildcards):
+    ck_output = checkpoints.split_kmer_by_line.get(**wildcards).output[0]
+    spl, = glob_wildcards(os.path.join(ck_output,f"kmers_sorted_dedup_set_{{split}}.gz"))
+    return expand(f"{output_dir}4_SPLIT_KMER/INDIV/{{ID}}-count_1x_set_{{split}}.tab.gz", split = spl, ID = NAME.values())
+
+rule sub_table:
+    threads: get_threads("sub_table",1)
+    input:
+        split_kmer= rules.split_kmer_by_line.output.path_split+f"/kmers_sorted_dedup_set_{{split}}.gz",
+        indiv_1x_coverage = rules.binary_to_tbl.output.table_kmer
+    output:
+        sub_table=temp(f"{output_dir}4_SPLIT_KMER/INDIV/{{ID}}-count_1x_set_{{split}}.tab.gz")
+    params:
+        no_find_kmer = f"{{ID}}_no_find_kmer.txt",
+        output_uncomressed = f"{{ID}}_temporary_{{split}}_uncompressed"
+    log:
+        error=f'{log_dir}SUB_TABLE/sub_table_{{ID}}_{{split}}.e',
+        output=f'{log_dir}SUB_TABLE/sub_table_{{ID}}_{{split}}.o'
+    message:
+        f"""
+             Running {{rule}}
+                Input :
+                    - KMERs files splitted : {{input.split_kmer}}
+                    - 1X Table kmer of individuals : {{input.indiv_1x_coverage}}
+                Output :
+                    - Sub_Table Filtered : {{output.sub_table}}
+                Others :
+                    - Threads : {{threads}}
+                    - LOG error : {{log.error}}
+                    - LOG output : {{log.output}}
+                
+                Command :
+                    - zcat {{input.indiv_1x_coverage}} | grep -Fwf <(zcat {{input.split_kmer}}) > {{params.output_uncomressed}}
+                      zcat {{input.split_kmer}} | grep -vFwf <(cat {{params.output_uncomressed}} | cut -f 1) > {{params.no_find_kmer}} 
+                      for line in `cat {{params.no_find_kmer}}`; do echo -e $line'\t'0 >> {{params.output_uncomressed}}; done
+                      sort {{params.output_uncomressed}} | gzip > {{output.sub_table}}
+                      rm -rf {{params.output_uncomressed}} {{params.no_find_kmer}}) 2>{{log.error}}
+
+            """
+    shell:
+        f"""
+        (echo -e KMER'\t'{{wildcards.ID}} | gzip > {{output.sub_table}}
+        zcat {{input.indiv_1x_coverage}} | grep -Fwf <(zcat {{input.split_kmer}}) > {{params.output_uncomressed}}
+        zcat {{input.split_kmer}} | grep -vFwf <(cat {{params.output_uncomressed}} | cut -f 1) > {{params.no_find_kmer}} 
+        for line in `cat {{params.no_find_kmer}}`; do echo -e $line'\t'0 >> {{params.output_uncomressed}}; done
+        sort {{params.output_uncomressed}} | gzip >> {{output.sub_table}}
+        rm -rf {{params.output_uncomressed}} {{params.no_find_kmer}}) 2>{{log.error}}
+        """
+
+
+
+rule merge_split:
+    threads: get_threads("merge_split",1)
+    input:
+        sub_table = get_split_test
+    output:
+        merge_block = temp(f"{output_dir}5_MERGE_TABLE/BLOCK/count_1x_set_{{split}}.tab.gz")
+    params:
+        block_file = f"{output_dir}4_SPLIT_KMER/INDIV/",
+        kmer_temp_file = f"{{split}}_kmer.txt"
+    log:
+        error=f'{log_dir}MERGE_SPLIT/merge_split_{{split}}.e',
+        output=f'{log_dir}MERGE_SPLIT/merge_split_{{split}}.o'
+    message:
+        f"""
+             Running {{rule}}
+                Input :
+                    - KMERs files splitted : {{input.sub_table}}
+                Output :
+                    - Sub_Table Filtered : {{output.merge_block}}
+                Others :
+                    - Threads : {{threads}}
+                    - LOG error : {{log.error}}
+                    - LOG output : {{log.output}}
+
+                Command :
+                    - echo KMER > {{params.kmer_temp_file}}  
+                    zcat {{params.block_file}}*_{{wildcards.split}}.tab.gz | cut -f1 | sort | uniq | sed "s/KMER//g" | sed '/^$/d' >> {{params.kmer_temp_file}}
+                    for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz; do zcat < "$file" > {count_kmer_file_temp}"_temp".txt ; done
+                    for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt; do cut -f2 < "$file" > {count_kmer_file_temp}"_temp".tempo; done
+                    paste {{params.kmer_temp_file}} {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo | gzip > {{output.merge_block}}
+                    rm {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt {{params.kmer_temp_file}}
+
+            """
+    shell:
+        f"""
+        (echo KMER > {{params.kmer_temp_file}}
+        zcat {{params.block_file}}*_{{wildcards.split}}.tab.gz | cut -f1 | sort | uniq | sed "s/KMER//g" | sed '/^$/d' >> {{params.kmer_temp_file}}
+        for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz; do zcat < "$file" > {count_kmer_file_temp}"_temp".txt ; done
+        for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt; do cut -f2 < "$file" > {count_kmer_file_temp}"_temp".tempo; done
+        paste {{params.kmer_temp_file}} {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo | gzip > {{output.merge_block}} ) 2> {{log.error}}
+        rm {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt {{params.kmer_temp_file}} 
+        """
+
+rule merge_final:
+    threads: get_threads("merge_final",1)
+    input:
+        semi_merge = get_split_kmer
+    output:
+        final_merge_table = f"{output_dir}5_MERGE_TABLE/kmer_count.tab.gz"
+    log:
+        error=f'{log_dir}FINAL_MERGE/final_merge.e',
+        output=f'{log_dir}FINAL_MERGE/final_merge.o'
+    message:
+        f"""
+             Running {{rule}}
+                Input :
+                    - Semi_MERGE Block files : {{input.semi_merge}}
+                Output :
+                    - Final Merge Table : {{output.final_merge_table}}
+                Others :
+                    - Threads : {{threads}}
+                    - LOG error : {{log.error}}
+                    - LOG output : {{log.output}}
+
+                Command :
+                    -   zcat {{input.semi_merge}} | head -n 1 > kmer_merge_temp.txt
+                    -   zcat {{input.semi_merge}} | sed "/^KMER/d" >> kmer_merge_temp.txt
+                    -   gzip  kmer_merge_temp.txt > {{output.final_merge_table}}
+        """
+    shell:
+        f"""
+        (zcat {{input.semi_merge}} | grep KMER | sort | uniq | gzip > {{output.final_merge_table}}
+        zcat {{input.semi_merge}} | sed '/^KMER/d' | gzip >> {{output.final_merge_table}}) 2> {{log.error}} 
+        """
+
+rule intersection_table:
+    threads: get_threads("intersection_table",6)
+    input:
+        table_merged = rules.merge_final.output.final_merge_table
+    output:
+        table_parsed = f"{output_dir}6_INTERSECTION_TABLE/PARSED/{parsed_intersect_name}.tbl"
+    params:
+        kmer_coverage=config["TOOLS_PARAMS"]["INTERSECT_TABLE"],
+        path_seq= f"{output_dir}6_INTERSECTION_TABLE/SEQ_KMER",
+        all_table= config["TOOLS_PARAMS"]["FULL_TABLE"],
+        full_table= f"{output_dir}6_INTERSECTION_TABLE/{full_intersect_name}.tbl"
+    log:
+        error=f'{log_dir}intersection_table/intersection_table.e',
+        output=f'{log_dir}intersection_table/intersection_table.o'
+    message:
+        f"""
+             Running {{rule}}
+                Input :
+                    - Merged Table : {{input.table_merged}}
+                Output :
+                    - Subset Merged Table : {{output.table_parsed}}
+                Others :
+                    - Threads : {{threads}}
+                    - LOG error : {{log.error}}
+                    - LOG output : {{log.output}}
+                Command :
+                    - python3 {script_dir}count_occurence_intersections.py --database {{input.table_merged}} --graph {{output.table_parsed}} --path {{params.path_seq}} --full_table {{params.all_table}} --output {{params.full_table}} {{params.kmer_coverage}} 1> {{log.output}} 2> {{log.error}}
+
+            """
+    envmodules:
+        tools_config["ENVMODULE"]["PYTHON"]
+    shell:
+        f"python3 {script_dir}count_occurence_intersections.py --database {{input.table_merged}} --graph {{output.table_parsed}} --path {{params.path_seq}} --full_table {{params.all_table}} --output {{params.full_table}} {{params.kmer_coverage}} 1> {{log.output}} 2> {{log.error}}"
+
+
+rule upset_plot:
+    threads: get_threads("upset_plot",1)
+    input:
+        upset_table = rules.intersection_table.output.table_parsed
+    output:
+        upset_plot = f"{output_dir}7_UPSET_PLOT/{upset_plot}.svg"
+    params:
+        list_color = config["DATA"]["LIST_COULEURS"],
+        upset_prefix = f"{output_dir}7_UPSET_PLOT/{upset_plot}"
+    log:
+        error=f'{log_dir}upset_plot/upset_plot.e',
+        output=f'{log_dir}upset_plot/upset_plot.o'
+    message:
+        f"""
+                 Running {{rule}}
+                    Input :
+                        - Upset Table : {{input.upset_table}}
+                    Output :
+                        - Upset Plot : {{output.upset_plot}}
+                    Others :
+                        - Threads : {{threads}}
+                        - LOG error : {{log.error}}
+                        - LOG output : {{log.output}}
+                    Command :
+                        - perl {script_dir}GraphKmer_v3.pl -in {{input.upset_table}} -list {{params.list_color}} -outprefix {{params.upset_prefix}} 1> {{log.output}} 2> {{log.error}}
+
+         """
+    envmodules:
+        tools_config["ENVMODULE"]["PERL"]
+    shell:
+        f"""
+        perl {script_dir}GraphKmer_v3.pl -in {{input.upset_table}} -list {{params.list_color}} -outprefix {{params.upset_prefix}} 1> {{log.output}} 2> {{log.error}}
+        """
+
+

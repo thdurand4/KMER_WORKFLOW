@@ -135,7 +135,8 @@ rule check_nb_reads :
 rule sub_set :
     threads: get_threads("sub_set",5)
     input:
-        fastq = lambda wildcards: all_reads[wildcards.prefix]["reads"]
+        fastq = lambda wildcards: all_reads[wildcards.prefix]["reads"],
+        info = rules.check_nb_reads.output.info_read if config["OPTIONAL"]["CHECK_NB_READS"] else []
     output:
         reads_sub_set = f"{output_dir}1_BIS_SUB_SET_READS/{{ID}}/{{ID}}_{{prefix}}.fastq.gz"
     params:

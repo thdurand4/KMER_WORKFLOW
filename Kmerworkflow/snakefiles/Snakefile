@@ -4,9 +4,9 @@ import re
 from os.path import exists
 from collections import defaultdict
 import Kmerworkflow
-from Kmerworkflow.module import Kmerworkflow
+from Kmerworkflow.module import KmerWorkflow
 
-kmer_obj = KMER_WORKFLOW(Kmerworkflow.dico_tool, workflow=workflow, config=config)
+kmer_obj = KmerWorkflow(Kmerworkflow.dico_tool, workflow=workflow, config=config)
 tools_config = kmer_obj.tools_config
 cluster_config = kmer_obj.cluster_config
 
@@ -46,19 +46,19 @@ all_reads = defaultdict(list)
 dico_couleur = defaultdict(list)
 uniq_color = set()
 for IDX, line in enumerate(open(fastq,"r")):
-	try:
-		ID = line.rstrip().split("\t")[0]
-		FASTQ = line.rstrip().split("\t")[1]
-		SUBSET = line.rstrip().split("\t")[2]
-		SEED = line.rstrip().split("\t")[3]
-		COULEUR = line.rstrip().split("\t")[4]
-		uniq_color.add(ID)
-		dico_couleur[ID].append(COULEUR)
-	except IndexError:
-		raise Exception(f"{bcolors.BOLD}{bcolors.FAIL}A field of Information file is empty please make sure to full all of the fields (5 fields)")
+    try:
+        ID = line.rstrip().split("\t")[0]
+        FASTQ = line.rstrip().split("\t")[1]
+        SUBSET = line.rstrip().split("\t")[2]
+        SEED = line.rstrip().split("\t")[3]
+        COULEUR = line.rstrip().split("\t")[4]
+        uniq_color.add(ID)
+        dico_couleur[ID].append(COULEUR)
+    except IndexError:
+        raise Exception(f"{bcolors.BOLD}{bcolors.FAIL}A field of Information file is empty please make sure to full all of the fields (5 fields)")
 
-        prefix = re.sub(r"\.\w+.gz",f"_{IDX}",os.path.basename(FASTQ))
-        all_reads[prefix] = {"idx": IDX, "name": ID, "reads": FASTQ, "color": COULEUR, "seed": SEED, "subset" : SUBSET}
+    prefix = re.sub(r"\.\w+.gz",f"_{IDX}",os.path.basename(FASTQ))
+    all_reads[prefix] = {"idx": IDX, "name": ID, "reads": FASTQ, "color": COULEUR, "seed": SEED, "subset" : SUBSET}
 
 
 

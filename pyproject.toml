@@ -57,6 +57,7 @@ dev = [
 count_occurence_intersections = "Kmerworkflow.scripts.count_occurence_intersections:main"
 count_read = "Kmerworkflow.scripts.count_reads:main"
 graph_kmer = "Kmerworkflow.scripts.GraphKmer_v3:main"
+Kmerworkflow = "Kmerworkflow.main:main"
 
 [project.entry-points.Kmerworkflow]
 Kmerworkflow = "__init__"

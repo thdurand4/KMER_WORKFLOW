@@ -37,7 +37,6 @@ Install Kmerworkflow in a *local* (single machine) mode using ``Kmerworkflow ins
     :nested: full
     :hide-header:
 
-#:hide-header:
 
 To create a pipeline, tools used by Kmerworkflow are wrapped into ``Singularity images``. These images are automatically downloaded and used by the configuration files of the pipeline. Local mode install, without scheduler, is constrains to use these Singularity images.
 
@@ -228,21 +227,6 @@ Absolute paths are strongly recommended. See the section :ref:`'How to build sin
 
 ------------------------------------------------------------------------
 
-And more ...
--------------
-
-How to build Singularity images
-*******************************
-
-You can build your own image using the available *.def* recipes from the ``KMER_WORKFLOW/Kmerworkflow/containers/`` directory.
-
-.. warning::
-   Be careful, you need root access to build Singularity images
-
-.. code-block:: bash
-
-   cd KMER_WORKFLOW/Kmerworkflow/containers/
-   sudo make build
 
 Threading rules inside Kmerworkflow
 ********************************

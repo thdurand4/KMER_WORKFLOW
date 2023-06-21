@@ -45,11 +45,6 @@ class KmerWorkflow(SnakEcdysis):
     def __check_config_dic(self):
         """Configuration file checking"""
         self.__get_tools_config("ENVMODULE")
-       
-        #self.tools_activated = self.__build_tools_activated("OPTIONAL", ("REMOVE_DUPLICATES"), True)
-        
-        self._check_dir_or_string(level1="DATA", level2="OUTPUT_DIR")
-        self._check_dir_or_string(level1="DATA", level2="SCRIPTS")
         
         if (os.path.isfile(self.get_config_value(level1='DATA', level2='LIST_ACCESSION'))):
             pass

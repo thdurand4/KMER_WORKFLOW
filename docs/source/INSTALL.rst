@@ -18,8 +18,10 @@ Install Kmerworkflow PyPI package
 First, install the Kmerworkflow python package with pip.
 
 .. code-block:: bash
-
-   python3 -m pip install Kmerworkflow
+   
+   git clone https://github.com/thdurand4/KMER_WORKFLOW.git
+   cd KMER_WORKFLOW
+   python3 -m pip install .
    Kmerworkflow --help
 
 Now, follow this documentation according to what you want, local or HPC mode.

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 DOCS = "https://kmer-workflow.readthedocs.io/en/latest/"
-GIT_URL = "https://github.com/thdurand4/Kmerworkflow"
+GIT_URL = "https://github.com/thdurand4/KMER_WORKFLOW"
 
 INSTALL_PATH = Path(__file__).resolve().parent
 SINGULARITY_URL_FILES = [('https://itrop.ird.fr/culebront_utilities/singularity_build/Singularity.culebront_tools.sif',

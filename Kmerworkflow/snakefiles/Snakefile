@@ -13,7 +13,6 @@ cluster_config = kmer_obj.cluster_config
 
 #Stockage des chemins des scripts et des accessions dans des variables à partir du fichier config
 output_dir = config['DATA']['OUTPUT_DIR']
-script_dir = config['DATA']['SCRIPTS']
 full_intersect_name = config['OPTIONAL']['FULL_INTERSECT_NAME']
 parsed_intersect_name = config['OPTIONAL']['PARSED_INTERSECT_NAME']
 upset_plot = config['OPTIONAL']['UPSET_PLOT']

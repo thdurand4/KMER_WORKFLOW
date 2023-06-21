@@ -2,7 +2,7 @@ __default__:
     cpus-per-task : 4
     mem-per-cpu : 10G
     partition : agap_short
-    log : "slurm_logs/log/{rule}_{wildcards}.out"
+    output : "slurm_logs/log/{rule}_{wildcards}.out"
     error : 'slurm_logs/error/{rule}_{wildcards}.error'
     job-name : "{rule}.{wildcards}"
 

@@ -14,7 +14,7 @@ About KMER_Workflow
 
 Check the doc's homepage to see how to install and use our workflow !
 
-**Homepage:** `https://workflow_kmer.readthedocs.io/en/latest/ <https://workflow-kmer.readthedocs.io/en/latest/>`_
+**Homepage:** `https://kmer-workflow.readthedocs.io/en/latest/ <https://kmer-workflow.readthedocs.io/en/latest/>`_
 
 Using reads fastq (NGS) of lot of accessions obtained by illumina
 sequencing can help to know origin of polyploid organisms like
@@ -50,5 +50,5 @@ Intellectual property belongs to `CIRAD <https://www.cirad.fr/>`_ and authors.
    :target: https://snakemake.readthedocs.io
    
 .. |readthedocs| image:: https://pbs.twimg.com/media/E5oBxcRXoAEBSp1.png
-   :target: https://workflow_kmer.readthedocs.io/en/latest/
+   :target: https://kmer-workflow.readthedocs.io/en/latest/
    :width: 400px

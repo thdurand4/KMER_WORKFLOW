@@ -42,6 +42,10 @@ Find here a summary table with description of each data need to launch Kmerworkf
     "LIST_COULEURS","Give path to a file which permit to get color for the final graph of pipeline. THIS FILE WILL BE CREATED AUTOMATATICALY DON'T CREATE IT"
     "OUTPUT_DIR","output *path* directory"
 
+Example of "LIST_ACCESSION" file : 
+
+
+
 .. warning::
 
     For FASTQ, naming convention is preferable by like *NAME_R1.fastq.gz* or *NAME_R1.fq.gz* or *NAME_R1.fastq* or *NAME_R1.fq*. Preferentially use short names and avoid special characters because report can fail. Avoid to use the long name given directly by sequencer.

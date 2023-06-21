@@ -177,7 +177,7 @@ or specifically, for each rule/tool depending on your HPC Job Scheduler (see `th
 
 Example of cluster_config_slurm.yaml : 
 
-.. literalinclude:: ../../Kmerworkflow/install_files/tools_path.yaml
+.. literalinclude:: ../../Kmerworkflow/install_files/cluster_config_SLURM.yamltools_path.yaml
    :language: YAML
    :lines: 1-22
 
@@ -254,33 +254,21 @@ This would save users a painful exploration of the snakefiles of Kmerworkflow.
 
 .. code-block:: python
 
-    bwa_index
-    run_atropos
-    run_fastqc
-    bwa_mem_sort_bam
-    run_bwa_aln
-    bwa_sampe_sort_bam
-    samtools_index
-    samtools_idxstats
-    merge_idxstats
-    samtools_depth
-    bam_stats_to_csv
-    merge_bam_stats
-    report
-    picardTools_mark_duplicates
-    create_sequence_dict
-    create_sequence_fai
-    gatk_HaplotypeCaller
-    gatk_GenomicsDBImport
-    gatk_GenotypeGVCFs_merge
-    bcftools_concat
-    vcftools_filter
-    vcf_to_fasta
-    vcf_to_geno
-    vcf_stats
-    report_vcf
-    run_raxml
-    run_raxml_ng
+    check_nb_reads
+    sub_set
+    create_list_fastq
+    cat_fastq
+    kmer_count
+    binary_to_tbl
+    cut_coverage
+    regroup_kmer
+    sorted_kmer
+    split_kmer_by_line
+    sub_table
+    merge_split
+    merge_final
+    intersection_table
+    upset_plot
 
 
 

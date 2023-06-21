@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from module import Kmerworkflow
-from Kmerworkflow.global_variables import *
 from pathlib import Path
 from .global_variables import GIT_URL, DOCS, DATATEST_URL_FILES, SINGULARITY_URL_FILES
+from .module import KmerWorkflow
 
-logo = Path(__file__).parent.resolve().joinpath('logo.png').as_posix()
+logo = Path(__file__).parent.resolve().joinpath('Kmerworkflow_logo.png').as_posix()
 
 __version__ = Path(__file__).parent.resolve().joinpath("VERSION").open("r").readline().strip()
 

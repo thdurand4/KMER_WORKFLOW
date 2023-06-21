@@ -1,6 +1,6 @@
 from pathlib import Path
 
-DOCS = "https://Kmerworkflow.readthedocs.io/en/latest/"
+DOCS = "https://kmer-workflow.readthedocs.io/en/latest/"
 GIT_URL = "https://github.com/thdurand4/Kmerworkflow"
 
 INSTALL_PATH = Path(__file__).resolve().parent

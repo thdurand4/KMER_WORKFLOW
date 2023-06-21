@@ -52,7 +52,7 @@ Example of "LIST_ACCESSION" file :
     - **The Second is the path to your FASTQ file**
     - **The Third field is the number of reads you want to subsamplig**. **IF YOU HAVE PAIRED DATA AND YOU WANT TO SUBSAMPLING 20 MILLION OF READ MAKE SURE TO WRITE 10 MILLION FOR EACH PAIRED**
     - **The Fourth field is the seed to random subsampling**. **MAKE SUR TO HAVE THE SAME SEED FOR ALL _R1.fq AND AN OTHER SEED FOR ALL _R2.fq FOR EXAMPLE 100 FOR R1 AND 150 FOR R2**
-    - **The Last field is the color to set for the individuals. (the color will be on the graph at the end)
+    - **The Last field is the color to set for the individuals**. (the color will be on the graph at the end)
 
 .. literalinclude:: ../../Kmerworkflow/install_files/access_list.txt
    :language: YAML

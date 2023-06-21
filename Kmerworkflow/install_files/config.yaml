@@ -4,7 +4,6 @@ DATA:
     ############################################################################
     #Give information about path of accessions files , path of the scripts and path where results will be writen
     OUTPUT_DIR: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/RESULTS_FASTQ_UNCONTAMINATED/"  #Directory where all the results will be written
-    SCRIPTS: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/scripts/"  #Directory of the scripts needed for the workflow
     LIST_ACCESSION: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/list_fastq_uncontaminate.txt"  #File needed to lauch the workflow it will contain "Accessions Path/to/fastq.gz black"
     LIST_COULEURS: "/home/durandt/scratch/WORKFLOW_KMER/WORKFLOW_KMER_V2/list_couleur"  #Give the path of the file that you need to make the graph to colors individual This file will be automaticaly created
     

@@ -1,34 +1,38 @@
-import kmer_worflow
-from podiumASM.snakeWrapper.global_variable import *
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Configuration file for the Sphinx documentation builder.
+#
+# This file only contains a selection of the most common options. For a full
+# list see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Path setup --------------------------------------------------------------
+
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+
+import Kmerworkflow
+import toml
+import sphinx_rtd_theme
+from datetime import datetime
+
+with open('../../pyproject.toml', 'r') as f:
+    conf = toml.load(f)
 
 # The short X.Y version.
-version = podiumASM.__version__
+version = Kmerworkflow.__version__
 # The full version, including alpha/beta/rc tags
-release = podiumASM.__version__
-
-rst_prolog = f"""
-.. |tools_path| replace:: {GIT_TOOLS_PATH}
-"""
-
-
-
-
+release = Kmerworkflow.__version__
 
 # -- Project information -----------------------------------------------------
 # General information about the project.
-project = 'PodiumASM'
-copyright = '2022, T Durand (CIRAD), S Bache (CIRAD), S Ravel (CIRAD)'
-github_doc_root = 'https://github.com/thdurand4/PodiumASM/tree/master/docs/'
-issues_github_path = 'https://github.com/thdurand4/PodiumASM/issues'
-
-latex_authors = '''
-Theo Durand (CIRAD),\\\\
-Simon Bache (CIRAD),\\\\
-Sebastien Ravel (CIRAD)\\\\
-'''
+project = conf['project']['name']
+authors = conf['project']['authors']
+date = datetime.now()
+copyright = "2023-{year}, T Durand (CIRAD)".format(year=date.timetuple()[0])
 
 # -- General configuration ---------------------------------------------------
-
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -37,9 +41,14 @@ extensions = [
               'sphinx.ext.viewcode',
               'sphinx.ext.autosectionlabel',
               'sphinx_copybutton',
-              'sphinx_rtd_theme',
+              "sphinx_rtd_theme",
               'sphinx_click'
               ]
+gitlab_url = 'https://github.com/'
+gitlab_user = 'thdurand4'
+gitlab_repo = 'KMER_WORKFLOW'
+gitlab_version = 'main'
+display_gitlab = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -61,42 +70,53 @@ master_doc = 'index'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
-html_css_files = ["theme.css"]
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    #'analytics_id': 'UA-172723859-1',  #  Provided by Google in your dashboard
+    'analytics_id': '',  #  Provided by Google in your dashboard
     'analytics_anonymize_ip': False,
-    'logo_only': True,
+    'logo_only': False,
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'vcs_pageview_mode': '',
-    # 'style_nav_header_background': 'cyan',
+    'style_nav_header_background': '#2980B9',
     # Toc options
     'collapse_navigation': False,
     'sticky_navigation': True,
     'navigation_depth': 3,
     'includehidden': False,
-    'titles_only': False
+    'titles_only': False,
 }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "PodiumASM"
+html_title = "KmerWorkflow"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = "PodiumASM"
+html_short_title = "Kmerworkflow"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '_images/PodiumASM_logo.png'
+html_logo = '_images/logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = '_images/PodiumASM_logo2.png'
+html_favicon = '_images/favicon-32x32.png'
+global html_context
+
+html_context = {
+    "gitlab_host": "https://github.com/",
+    "display_gitlab": True, # Integrate Gitlab
+    "gitlab_user": "thdurand4", # Username
+    "gitlab_repo": "KMER_WORKFLOW", # Repo name
+    "gitlab_version": "main", # Version
+    "conf_py_path": "/docs/source/", # Path in the checkout to the docs root
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

@@ -177,7 +177,7 @@ or specifically, for each rule/tool depending on your HPC Job Scheduler (see `th
 
 Example of cluster_config_slurm.yaml : 
 
-.. literalinclude:: ../../Kmerworkflow/install_files/cluster_config_SLURM.yamltools_path.yaml
+.. literalinclude:: ../../Kmerworkflow/install_files/cluster_config_SLURM.yaml
    :language: YAML
    :lines: 1-22
 

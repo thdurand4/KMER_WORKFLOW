@@ -11,12 +11,6 @@ tools_config = kmer_obj.tools_config
 cluster_config = kmer_obj.cluster_config
 
 
-
-configfile: "config/config.yaml"
-
-
-
-
 #Stockage des chemins des scripts et des accessions dans des variables à partir du fichier config
 output_dir = config['DATA']['OUTPUT_DIR']
 script_dir = config['DATA']['SCRIPTS']
@@ -127,7 +121,7 @@ rule check_nb_reads :
     envmodules:
         tools_config["ENVMODULE"]["PYTHON"]
     shell:
-        f"python3 {script_dir}count_reads.py --input {{input.fastq}} --output {{output.info_read}} --subset {{params.subset}} 1> {{log.output}} 2>{{log.error}}"
+        f"python3 {kmer_obj.snakemake_scripts}/count_reads.py --input {{input.fastq}} --output {{output.info_read}} --subset {{params.subset}} 1> {{log.output}} 2>{{log.error}}"
 
 
 
@@ -583,7 +577,7 @@ rule intersection_table:
                     - LOG error : {{log.error}}
                     - LOG output : {{log.output}}
                 Command :
-                    - python3 {script_dir}count_occurence_intersections.py --database {{input.table_merged}} --graph {{output.table_parsed}} --path {{params.path_seq}} --full_table {{params.all_table}} --output {{params.full_table}} {{params.kmer_coverage}} 1> {{log.output}} 2> {{log.error}}
+                    - python3 {kmer_obj.snakemake_scripts}/count_occurence_intersections.py --database {{input.table_merged}} --graph {{output.table_parsed}} --path {{params.path_seq}} --full_table {{params.all_table}} --output {{params.full_table}} {{params.kmer_coverage}} 1> {{log.output}} 2> {{log.error}}
 
             """
     envmodules:
@@ -616,7 +610,7 @@ rule upset_plot:
                         - LOG error : {{log.error}}
                         - LOG output : {{log.output}}
                     Command :
-                        - perl {script_dir}GraphKmer_v3.pl -in {{input.upset_table}} -list {{params.list_color}} -outprefix {{params.upset_prefix}} 1> {{log.output}} 2> {{log.error}}
+                        - perl {kmer_obj.snakemake_scripts}/GraphKmer_v3.pl -in {{input.upset_table}} -list {{params.list_color}} -outprefix {{params.upset_prefix}} 1> {{log.output}} 2> {{log.error}}
 
          """
     envmodules:

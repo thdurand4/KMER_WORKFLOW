@@ -44,6 +44,9 @@ Find here a summary table with description of each data need to launch Kmerworkf
 
 Example of "LIST_ACCESSION" file : 
 
+.. literalinclude:: ../../Kmerworkflow/install_files/access_list.txt
+   :language: YAML
+   :lines: 1-20
 
 
 .. warning::

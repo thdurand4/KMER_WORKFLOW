@@ -481,7 +481,7 @@ rule merge_split:
     input:
         sub_table = get_split_test
     output:
-        merge_block = temp(f"{output_dir}5_MERGE_TABLE/BLOCK/count_1x_set_{{split}}.tab.gz")
+        merge_block = f"{output_dir}5_MERGE_TABLE/BLOCK/count_1x_set_{{split}}.tab.gz"
     params:
         block_file = f"{output_dir}4_SPLIT_KMER/INDIV/",
         kmer_temp_file = f"{{split}}_kmer.txt"

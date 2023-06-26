@@ -121,7 +121,7 @@ If you installed Kmerworkflow on a HPC cluster with a job scheduler, you can run
     :hide-header:
 
 .. warning::
-   **MAKE SURE TO RUN THE WORKFLOW WITH THIS COMMAND** : Kmerworkflow run_cluster -c config.yaml --rerun-triggers mtime
+   **MAKE SURE TO RUN THE WORKFLOW WITH THIS COMMAND** : Kmerworkflow run_cluster -c config.yaml ---rerun-triggers mtime
 
 ------------------------------------------------------------------------
 

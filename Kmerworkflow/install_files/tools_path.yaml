@@ -4,8 +4,7 @@
 ## WARNING!!! DO NOT ERASE LINES OR COMMENT THEM !  è_é
 
 SINGULARITY:
-    REPORT : 'INSTALL_PATH/containers/Singularity.report.sif'
-    TOOLS : 'INSTALL_PATH/containers/Singularity.tools.sif'
+    TOOLS : 'docker://thdurand/kmer_workflow:1.0' #DON T CHANGE THIS LINE IF YOU USE SINGULARITY !!
 
 # Is and exemple of tools path
 ENVMODULE:

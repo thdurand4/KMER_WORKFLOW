@@ -625,7 +625,7 @@ rule upset_plot:
 
          """
     singularity:
-    	tools_config["SINGULARITY"]["TOOLS"]
+    	tools_config["SINGULARITY"]["PERL"]
     envmodules:
         tools_config["ENVMODULE"]["PERL"]
     shell:

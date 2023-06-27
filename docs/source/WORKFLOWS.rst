@@ -122,6 +122,7 @@ If you installed Kmerworkflow on a HPC cluster with a job scheduler, you can run
 
 .. warning::
    **MAKE SURE TO RUN THE WORKFLOW WITH THIS COMMAND** : Kmerworkflow run_cluster -c config.yaml ---rerun-triggers mtime
+   **IF YOU CHOSE INSTALL WITH SINGULARITY RUN THIS COMMAND** : Kmerworkflow run_cluster -c config.yaml ---rerun-triggers mtime --singularity-args \'--home ~/\'
 
 ------------------------------------------------------------------------
 

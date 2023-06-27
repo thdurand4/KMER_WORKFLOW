@@ -425,11 +425,6 @@ def get_split_kmer(wildcards):
     return expand(f"{output_dir}5_MERGE_TABLE/BLOCK/count_1x_set_{{split}}.tab.gz",split=spl)
 
 
-def get_split_test(wildcards):
-    ck_output = checkpoints.split_kmer_by_line.get(**wildcards).output[0]
-    spl, = glob_wildcards(os.path.join(ck_output,f"kmers_sorted_dedup_set_{{split}}.gz"))
-    return expand(f"{output_dir}4_SPLIT_KMER/INDIV/{{ID}}-count_1x_set_{{split}}.tab.gz", split = spl, ID = NAME.values())
-
 rule sub_table:
     threads: get_threads("sub_table",1)
     input:
@@ -474,6 +469,10 @@ rule sub_table:
         rm -rf {{params.output_uncomressed}} {{params.no_find_kmer}}) 2>{{log.error}}
         """
 
+def get_split_test(wildcards):
+    ck_output = checkpoints.split_kmer_by_line.get(**wildcards).output[0]
+    spl, = glob_wildcards(os.path.join(ck_output,f"kmers_sorted_dedup_set_{{split}}.gz"))
+    return expand(f"{output_dir}4_SPLIT_KMER/INDIV/{{ID}}-count_1x_set_{{split}}.tab.gz", split = spl, ID = NAME.values())
 
 
 rule merge_split:
@@ -519,6 +518,7 @@ rule merge_split:
         rm {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt {{params.kmer_temp_file}} 
         """
 
+
 rule merge_final:
     threads: get_threads("merge_final",1)
     input:
@@ -550,6 +550,7 @@ rule merge_final:
         (zcat {{input.semi_merge}} | grep KMER | sort | uniq | gzip > {{output.final_merge_table}}
         zcat {{input.semi_merge}} | sed '/^KMER/d' | gzip >> {{output.final_merge_table}}) 2> {{log.error}} 
         """
+
 
 rule intersection_table:
     threads: get_threads("intersection_table",6)

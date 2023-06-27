@@ -5,6 +5,7 @@
 
 SINGULARITY:
     TOOLS : 'docker://thdurand/kmer_workflow:1.0' #DON T CHANGE THIS LINE IF YOU USE SINGULARITY !!
+    PERL : 'docker://thdurand/perl:1.0' #DON T CHANGE THIS LINE IF YOU USE SINGULARITY !!
 
 # Is and exemple of tools path
 ENVMODULE:

@@ -491,7 +491,8 @@ rule merge_split:
         merge_block = f"{output_dir}5_MERGE_TABLE/BLOCK/count_1x_set_{{split}}.tab.gz"
     params:
         block_file = f"{output_dir}4_SPLIT_KMER/INDIV/",
-        kmer_temp_file = f"{{split}}_kmer.txt"
+        kmer_temp_file = f"{{split}}_kmer.txt",
+        list_kmer = f"{output_dir}4_SPLIT_KMER/LIST/"
     log:
         error=f'{log_dir}MERGE_SPLIT/merge_split_{{split}}.e',
         output=f'{log_dir}MERGE_SPLIT/merge_split_{{split}}.o'
@@ -509,7 +510,7 @@ rule merge_split:
 
                 Command :
                     - echo KMER > {{params.kmer_temp_file}}  
-                    zcat {{params.block_file}}*_{{wildcards.split}}.tab.gz | cut -f1 | sort | uniq | sed "s/KMER//g" | sed '/^$/d' >> {{params.kmer_temp_file}}
+                    zcat {{params.list_kmer}}*_{{wildcards.split}}.gz >> {{params.kmer_temp_file}}
                     for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz; do zcat < "$file" > {count_kmer_file_temp}"_temp".txt ; done
                     for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt; do cut -f2 < "$file" > {count_kmer_file_temp}"_temp".tempo; done
                     paste {{params.kmer_temp_file}} {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo | gzip > {{output.merge_block}}
@@ -519,7 +520,7 @@ rule merge_split:
     shell:
         f"""
         (echo KMER > {{params.kmer_temp_file}}
-        zcat {{params.block_file}}*_{{wildcards.split}}.tab.gz | cut -f1 | sort | uniq | sed "s/KMER//g" | sed '/^$/d' >> {{params.kmer_temp_file}}
+        zcat {{params.list_kmer}}*_{{wildcards.split}}.gz >> {{params.kmer_temp_file}}
         for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz; do zcat < "$file" > {count_kmer_file_temp}"_temp".txt ; done
         for file in {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt; do cut -f2 < "$file" > {count_kmer_file_temp}"_temp".tempo; done
         paste {{params.kmer_temp_file}} {{params.block_file}}*_{{wildcards.split}}.tab.gz_temp.txt_temp.tempo | gzip > {{output.merge_block}} ) 2> {{log.error}}
